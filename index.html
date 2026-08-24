@@ -1,0 +1,390 @@
+<title>BOKwatch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --bg:#F2F5F5; --surface:#FFFFFF; --surface-2:#E9EEEE; --surface-3:#DFE6E6;
+  --ink:#0F1E1D; --ink-2:#41534F; --ink-3:#71827E; --line:#D5DEDD;
+  --accent:#0E7C86; --accent-strong:#0A5A62; --on-accent:#F3FBFB;
+  --up:#B4451B; --up-soft:#F3E0D6; --down:#1D6FB8; --down-soft:#DBE8F4; --hold:#5C6E6A;
+  --warn:#B8860B; --warn-soft:#F5ECD2;
+  --shadow:0 1px 2px rgba(15,30,29,.05),0 8px 24px -12px rgba(15,30,29,.14);
+  --radius:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B1212; --surface:#111B1A; --surface-2:#182423; --surface-3:#21302E;
+  --ink:#E9F1F0; --ink-2:#9DAFAB; --ink-3:#6E807C; --line:#243331;
+  --accent:#2BA7B0; --accent-strong:#57C4CB; --on-accent:#04191B;
+  --up:#E4794C; --up-soft:#3A241A; --down:#5AA0DC; --down-soft:#16283A; --hold:#859894;
+  --warn:#D9B45A; --warn-soft:#2E2812;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -14px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --bg:#0B1212; --surface:#111B1A; --surface-2:#182423; --surface-3:#21302E;
+  --ink:#E9F1F0; --ink-2:#9DAFAB; --ink-3:#6E807C; --line:#243331;
+  --accent:#2BA7B0; --accent-strong:#57C4CB; --on-accent:#04191B;
+  --up:#E4794C; --up-soft:#3A241A; --down:#5AA0DC; --down-soft:#16283A; --hold:#859894;
+  --warn:#D9B45A; --warn-soft:#2E2812;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -14px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 76px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px}
+.brand{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-strong);font-weight:600}
+h1{font-size:clamp(30px,5vw,46px);margin:0;font-weight:700;letter-spacing:-.02em;line-height:1}
+.sub{color:var(--ink-2);font-size:14.5px;max-width:58ch}
+.headmeta{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.themebtn{background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);border-radius:9px;padding:7px 10px;cursor:pointer;font:inherit;font-size:12.5px}
+.themebtn:hover{color:var(--ink)}
+.asof{font-size:12px;color:var(--ink-3)}
+.asof b{color:var(--ink-2);font-weight:600}
+
+/* headline hero */
+.hero{margin:22px 0 6px;background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 12%,var(--surface)),var(--surface));
+  border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:24px 26px;display:flex;flex-wrap:wrap;gap:26px;align-items:center;justify-content:space-between}
+.hero .lead{display:flex;flex-direction:column;gap:4px}
+.hero .lead .q{font-size:13px;color:var(--ink-2);letter-spacing:.02em}
+.hero .lead .big{font-size:clamp(26px,4vw,38px);font-weight:700;letter-spacing:-.01em}
+.hero .lead .big .pct{color:var(--accent-strong)}
+.hero .split{display:flex;gap:10px;flex-wrap:wrap}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 15px;min-width:104px}
+.stat .k{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.stat .v{font-size:22px;font-weight:600;margin-top:2px}
+.stat .v small{font-size:12px;color:var(--ink-3);font-weight:400}
+
+.rule{height:1px;background:var(--line);margin:22px 0 24px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media(max-width:840px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.card h2{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin:0 0 15px;font-weight:600}
+.card h2 .hint{text-transform:none;letter-spacing:0;color:var(--ink-3);font-weight:400;font-size:12px}
+.field{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
+.field label{font-size:13.5px;color:var(--ink-2)}
+input[type=number]{width:92px;font-family:"IBM Plex Mono",monospace;font-size:14px;text-align:right;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--ink)}
+input[type=number]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.meeting-row{display:grid;grid-template-columns:1fr auto auto auto;gap:9px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.meeting-row:first-of-type{border-top:none}
+.mdate{font-weight:600;font-size:14.5px}
+.mdate small{display:block;color:var(--ink-3);font-weight:400;font-size:11.5px}
+.pin{display:flex;flex-direction:column;gap:3px;align-items:center}
+.pin span{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.pin input{width:64px;padding:5px 6px}
+.pin.up input{border-color:color-mix(in srgb,var(--up) 45%,var(--line))}
+.pin.down input{border-color:color-mix(in srgb,var(--down) 45%,var(--line))}
+.pin.hold .holdv{width:64px;text-align:center;padding:6px;border-radius:8px;background:var(--surface-3);color:var(--hold);font-family:"IBM Plex Mono",monospace;font-size:14px;font-weight:600;border:1px dashed color-mix(in srgb,var(--hold) 40%,var(--line))}
+.lam{display:flex;align-items:center;gap:12px;margin:6px 0 16px}
+.lam label{font-size:13px;color:var(--ink-2);white-space:nowrap}
+.lam input[type=range]{flex:1;accent-color:var(--accent)}
+.lam .lv{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-2);width:30px;text-align:right}
+details.adv{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+details.adv summary{cursor:pointer;font-size:13px;color:var(--accent-strong);font-weight:600;list-style:none}
+details.adv summary::-webkit-details-marker{display:none}
+details.adv summary::before{content:"▸ ";color:var(--accent)}
+details.adv[open] summary::before{content:"▾ "}
+.chkrow{display:flex;align-items:center;gap:8px;margin:12px 0 4px;font-size:12.5px;color:var(--ink-2)}
+.btn{margin-top:10px;background:var(--accent);color:var(--on-accent);border:none;border-radius:9px;padding:9px 14px;font:inherit;font-weight:600;font-size:13px;cursor:pointer}
+.btn:hover{background:var(--accent-strong)}
+.btn.ghost{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+.note{font-size:12px;color:var(--ink-3);margin-top:9px;line-height:1.5}
+.viewtabs{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.viewtabs button{border:none;background:transparent;color:var(--ink-2);font:inherit;font-size:13px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer}
+.viewtabs button[aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.viewdesc{font-size:12.5px;color:var(--ink-2);margin:8px 2px 14px}
+.matrix-scroll,.tbl-scroll{overflow-x:auto}
+table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:13.5px}
+table.mx th,table.mx td{padding:9px 8px;text-align:center}
+table.mx thead th{font-weight:600;color:var(--ink-2);font-size:12px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.mx thead th .lvl{display:block;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink)}
+table.mx tbody th{text-align:left;font-weight:600;white-space:nowrap;padding-right:14px}
+table.mx tbody th small{display:block;color:var(--ink-3);font-weight:400;font-size:11px}
+.cell{border-radius:8px;font-family:"IBM Plex Mono",monospace;font-weight:500}
+.cell.on{color:var(--on-accent)} .cell.dim{color:var(--ink-3)}
+.dirchip{display:inline-block;font-size:10px;letter-spacing:.05em;padding:1px 6px;border-radius:20px;font-weight:600}
+.dirchip.up{background:var(--up-soft);color:var(--up)} .dirchip.down{background:var(--down-soft);color:var(--down)} .dirchip.hold{background:var(--surface-3);color:var(--hold)}
+.bars{display:flex;flex-direction:column;gap:14px;margin-top:2px}
+.bar-row{display:grid;grid-template-columns:74px 1fr;gap:12px;align-items:center}
+.bar-lab{font-size:13px;font-weight:600}
+.bar-lab small{display:block;color:var(--ink-3);font-weight:400;font-size:11px}
+.track{display:flex;height:26px;border-radius:7px;overflow:hidden;background:var(--surface-2);border:1px solid var(--line)}
+.seg{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;min-width:0;white-space:nowrap}
+.seg.hold{background:var(--hold)} .seg.up{background:var(--up)} .seg.down{background:var(--down)}
+svg.path{width:100%;height:200px;display:block;margin-top:6px}
+.axis text{fill:var(--ink-3);font-size:11px;font-family:"IBM Plex Mono",monospace}
+.gridline{stroke:var(--line);stroke-width:1}
+.pathline{fill:none;stroke:var(--accent);stroke-width:2.5}
+.pathdot{fill:var(--surface);stroke:var(--accent);stroke-width:2.5}
+.pathlab{fill:var(--ink);font-size:11.5px;font-family:"IBM Plex Mono",monospace;font-weight:600}
+/* data tables */
+table.data{border-collapse:collapse;width:100%;font-size:13px;min-width:520px}
+table.data th,table.data td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right}
+table.data th{color:var(--ink-3);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em}
+table.data td:first-child,table.data th:first-child{text-align:left}
+table.data td.num{font-family:"IBM Plex Mono",monospace}
+.tag{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:20px}
+.tag.liq{background:var(--down-soft);color:var(--down)} .tag.illiq{background:var(--warn-soft);color:var(--warn)}
+pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.55;color:var(--ink-2)}
+pre.code b{color:var(--accent-strong);font-weight:600}
+.method p{font-size:13.5px;color:var(--ink-2);margin:0 0 10px}
+.method h3{font-size:14px;margin:18px 0 8px;color:var(--ink)}
+footer{margin-top:28px;color:var(--ink-3);font-size:12px;line-height:1.6}
+footer b{color:var(--ink-2);font-weight:600}
+a{color:var(--accent-strong)}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="eyebrow">KOFR 선물 내재 · 한국은행 금통위</span>
+      <h1>BOKwatch</h1>
+      <p class="sub">KOFR 3개월 선물에 반영된 시장 기대를 FedWatch 방식으로 변환해, 금융통화위원회 회의별 기준금리 결정 확률을 산출합니다.</p>
+    </div>
+    <div class="headmeta">
+      <button class="themebtn" id="themebtn" type="button">◐ 테마</button>
+      <div class="asof">데이터 기준 <b id="asofLabel">—</b> · <span id="srcLabel">—</span></div>
+      <div class="asof">현 기준금리 <b id="baseBadge" class="mono">2.75%</b></div>
+    </div>
+  </header>
+
+  <!-- HERO / HEADLINE -->
+  <div class="hero">
+    <div class="lead">
+      <span class="q">다음 금통위 <b id="heroDate">8/27</b> · 시장 반영</span>
+      <span class="big" id="heroLine">인상 <span class="pct">—</span></span>
+    </div>
+    <div class="split" id="heroStats"></div>
+  </div>
+  <p class="note" style="margin:0 0 8px">※ KRX KOFR 3개월 선물 정산가에서 <b>산출</b>한 시장 내재 확률이며 예측이 아닙니다. 유동성(OI)이 얕아 개별 회의 분리엔 한계가 있어 평활(정칙화)을 적용합니다. 교육·리서치용, 투자자문 아님.</p>
+
+  <div class="rule"></div>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>입력 <span class="hint">— 회의별 시장 기대</span></h2>
+      <div class="field"><label for="base">현 기준금리 (%)</label><input type="number" id="base" value="2.75" step="0.25" min="0" max="6"></div>
+      <div class="field"><label for="kofr">현재 KOFR (%) <span style="color:var(--ink-3);font-size:12px">· 스트립 앵커</span></label><input type="number" id="kofr" value="2.75" step="0.01" min="0" max="6"></div>
+      <div id="meetings"></div>
+
+      <details class="adv" open>
+        <summary>KOFR 선물 정산가 → 자동 산출 (스트리핑)</summary>
+        <div class="lam"><label>평활 λ</label><input type="range" id="lam" min="0" max="4" step="0.5" value="1"><span class="lv mono" id="lamv">1.0</span></div>
+        <div class="note" style="margin-top:0">λ↑ = 회의 사이를 부드럽게(안정), λ=0 = 원시 해(유동성 얕으면 불안정).</div>
+        <div class="tbl-scroll" style="margin-top:12px"><table class="data" id="cInput"></table></div>
+        <label class="chkrow"><input type="checkbox" id="incIlliq"> OI=0(호가 마크)까지 포함</label>
+        <div style="display:flex;gap:8px"><button class="btn" id="stripBtn" type="button">스트립 실행 → 확률 갱신</button></div>
+        <p class="note" id="stripMsg"></p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>회의별 결정 확률 <span class="hint">— 개별 회의</span></h2>
+      <div class="bars" id="bars"></div>
+      <h2 style="margin-top:24px">기대 정책금리 경로</h2>
+      <svg class="path" id="pathChart" viewBox="0 0 520 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="기대 정책금리 경로"></svg>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:20px">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px">
+      <div class="viewtabs" role="tablist"><button role="tab" id="tab-cond" aria-selected="true">Conditional</button><button role="tab" id="tab-agg" aria-selected="false">Aggregated</button></div>
+      <div style="font-size:12px;color:var(--ink-3)">셀 = 해당 시점까지 그 금리수준일 확률</div>
+    </div>
+    <p class="viewdesc" id="viewdesc"></p>
+    <div class="matrix-scroll"><table class="mx" id="matrix"></table></div>
+  </section>
+
+  <!-- DETAILED DATASET + METHOD -->
+  <section class="card" style="margin-top:20px">
+    <h2>세부 데이터셋 <span class="hint">— 원자료 · 스트립 중간값 · 방법론</span></h2>
+    <h3 style="font-size:14px;margin:4px 0 8px">① KRX KOFR 3개월 선물 (원자료)</h3>
+    <div class="tbl-scroll"><table class="data" id="rawTable"></table></div>
+    <h3 style="font-size:14px;margin:20px 0 8px">② 스트립 구간금리 <span style="font-weight:400;color:var(--ink-3);font-size:12px">(회의 사이 기대 정책금리 수준)</span></h3>
+    <div class="tbl-scroll"><table class="data" id="segTable"></table></div>
+
+    <details class="adv" open style="margin-top:18px">
+      <summary>③ 방법론 & 함수 (코드 공개)</summary>
+      <div class="method" style="margin-top:12px">
+        <p><b>왜 스트리핑인가.</b> KRX엔 3개월 복리 KOFR 선물만 상장(1개월물 없음). 계약끼리 참조기간이 겹쳐, FedWatch의 "인접 월물 차분" 트릭이 안 통한다. 대신 회의 사이마다 금리가 상수라 두면, 각 선물의 3개월 평균은 그 창에 걸친 구간금리들의 일수가중 평균이다. 겹치는 계약 전부를 <b>연립 최소자승</b>으로 풀어 구간금리를 복원한다.</p>
+        <pre class="code">R_i = Σ_s <b>w(i,s)</b>·L_s        w(i,s) = 구간 s가 창 i에 걸친 일수 / 창 i 총일수
+앵커: 첫 구간 = 현재 KOFR (실현 과거 = 기준금리)
+평활: min ‖A·L − b‖² + <b>λ</b>·Σ (L_{s+1} − L_s)²   ← 유동성 얕을 때 안정화(Tikhonov)
+회의 스텝 = L(회의후) − L(회의전),  확률 = 스텝 / 25bp 를 인접 격자에 배분</pre>
+        <p><b>다회의 투영.</b> Conditional = 회의별 스텝분포를 독립으로 컨볼루션한 누적분포(타이밍 불확실성 포함). Aggregated = 현재 대비 순 인상횟수(타이밍 무관). CME FedWatch Aggregated Enhancement와 동형.</p>
+        <pre class="code" id="jsdump"></pre>
+        <p class="note">전체 코드·검증(자기검증 round-trip 포함): <b>bokwatch_strip.py / bokwatch_projection.py</b>. 이 페이지의 계산은 아래 <b>같은 로직의 JS 이식</b>이며 전부 브라우저 로컬 실행.</p>
+      </div>
+    </details>
+
+    <h3 style="font-size:14px;margin:18px 0 8px">④ 자동 동기화</h3>
+    <p class="method" style="margin:0">매 영업일 <b>GitHub Actions</b>(무료 크론)가 KRX 데이터를 받아 <code>bokwatch_data.json</code>을 갱신 → 이 페이지가 로드. 이 페이지도 <code>bokwatch_data.json</code>이 있으면 자동으로 그 값을 씁니다(없으면 내장 스냅샷). 소스: KRX Open API(승인키) 또는 data.krx CSV. 스크립트 <b>sync/krx_sync.py</b>, 워크플로 <b>bokwatch.yml</b>.</p>
+  </section>
+
+  <footer>
+    <b>데이터</b> · KRX KOFR 3개월 선물 정산가·미결제약정(OI). 유동물(OI&gt;0) 위주로 산출하며 2027물은 호가 마크(OI=0). <b>KOFR-OIS</b> 회의일자 분해가 최정밀이나, 무료 접근 편의상 선물 스트립을 기본으로 함.<br>
+    <b>주의</b> · 모든 계산은 브라우저 로컬. 시장가 반영 <b>산출</b>이며 예측·투자자문 아님.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const UNIT=25, $=s=>document.querySelector(s);
+  const fmtPct=x=>Math.round(x*100)+"%";
+
+  // ---- embedded snapshot (fallback); overridden by bokwatch_data.json if present ----
+  let DATA={
+    asOf:"2026-08-24", baseRate:2.75, kofr:2.75, source:"내장 스냅샷 (KRX CSV, 2026-08-24)",
+    contracts:[
+      {mat:"2026-09",price:97.245,impliedRate:2.755,oi:350},
+      {mat:"2026-10",price:97.075,impliedRate:2.925,oi:30},
+      {mat:"2026-11",price:96.97, impliedRate:3.03, oi:90},
+      {mat:"2026-12",price:96.955,impliedRate:3.045,oi:20},
+      {mat:"2027-01",price:96.805,impliedRate:3.195,oi:0},
+      {mat:"2027-02",price:96.675,impliedRate:3.325,oi:0},
+      {mat:"2027-03",price:96.57, impliedRate:3.43, oi:0},
+      {mat:"2027-06",price:96.305,impliedRate:3.695,oi:0}
+    ]
+  };
+  const meetings=[
+    {label:"8/27",date:"2026-08-27",pUp:0.55,pDown:0},
+    {label:"10/22",date:"2026-10-22",pUp:0.40,pDown:0},
+    {label:"11/26",date:"2026-11-26",pUp:0.20,pDown:0},
+  ];
+  let view="cond", lam=1.0, stripInfo=null;
+
+  // ---- math ----
+  function convolve(a,b){const o={};for(const ka in a)for(const kb in b){const k=(+ka)+(+kb);o[k]=(o[k]||0)+a[ka]*b[kb];}return o;}
+  function stepDist(m){const h=Math.max(0,1-m.pUp-m.pDown),d={};if(m.pDown>1e-9)d[-25]=m.pDown;if(h>1e-9)d[0]=h;if(m.pUp>1e-9)d[25]=m.pUp;return d;}
+  function conditional(steps){let cum={0:1};const rows=[];for(const s of steps){cum=convolve(cum,s);const r={};for(const k in cum)if(cum[k]>5e-4)r[k]=cum[k];rows.push(r);}return rows;}
+  function splitUnits(net){const lo=UNIT*Math.floor(net/UNIT),hi=lo+UNIT,ph=hi===lo?0:(net-lo)/(hi-lo),d={};if(1-ph>5e-4)d[lo]=1-ph;if(ph>5e-4)d[hi]=ph;return d;}
+  function aggregated(steps){let run=0;const rows=[];for(const s of steps){let e=0;for(const k in s)e+=(+k)*s[k];run+=e;rows.push(splitUnits(run));}return rows;}
+  function stepToDist(bp){const lo=UNIT*Math.floor(bp/UNIT),hi=lo+UNIT,ph=hi===lo?0:(bp-lo)/(hi-lo),d={};if(1-ph>5e-3)d[lo]=1-ph;if(ph>5e-3)d[hi]=ph;return d;}
+
+  // ---- strip (ridge least squares) ----
+  function dstr(s){const[y,m,d]=s.split("-").map(Number);return new Date(Date.UTC(y,m-1,d||15));}
+  function days(a,b){return Math.round((b-a)/86400000);}
+  function overlap(a0,a1,b0,b1){const lo=Math.max(a0,b0),hi=Math.min(a1,b1);return Math.max(0,days(new Date(lo),new Date(hi)));}
+  function matWindow(mat){const e=dstr(mat+"-15");const s=new Date(e);s.setUTCMonth(s.getUTCMonth()-3);return[s,e];}
+  function solveLS(A,b){const n=A[0].length,AtA=Array.from({length:n},()=>Array(n).fill(0)),Atb=Array(n).fill(0);
+    for(let i=0;i<A.length;i++)for(let j=0;j<n;j++){Atb[j]+=A[i][j]*b[i];for(let k=0;k<n;k++)AtA[j][k]+=A[i][j]*A[i][k];}
+    for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(AtA[r][c])>Math.abs(AtA[p][c]))p=r;[AtA[c],AtA[p]]=[AtA[p],AtA[c]];[Atb[c],Atb[p]]=[Atb[p],Atb[c]];
+      const pv=AtA[c][c]||1e-9;for(let r=0;r<n;r++){if(r===c)continue;const f=AtA[r][c]/pv;for(let k=c;k<n;k++)AtA[r][k]-=f*AtA[c][k];Atb[r]-=f*Atb[c];}}
+    return Atb.map((v,i)=>v/(AtA[i][i]||1e-9));}
+  function runStrip(){
+    const kofr=parseFloat($("#kofr").value)||2.75;
+    const incIlliq=$("#incIlliq").checked;
+    const cs=DATA.contracts.filter(c=>incIlliq||c.oi>0);
+    if(cs.length<3){$("#stripMsg").textContent="유동 계약이 3개 미만 — OI=0 포함을 켜세요.";return;}
+    const wins=cs.map(c=>matWindow(c.mat));
+    const t0=Math.min(...wins.map(w=>+w[0])),t1=Math.max(...wins.map(w=>+w[1]));
+    const cuts=[new Date(t0)];meetings.forEach(m=>{const d=dstr(m.date);if(+d>t0&&+d<t1)cuts.push(d);});cuts.push(new Date(t1));cuts.sort((a,b)=>a-b);
+    const segs=[];for(let i=0;i<cuts.length-1;i++)segs.push([cuts[i],cuts[i+1]]);
+    const S=segs.length,A=[],b=[];
+    cs.forEach((c,ci)=>{const n=days(wins[ci][0],wins[ci][1]);A.push(segs.map(([s0,s1])=>overlap(+wins[ci][0],+wins[ci][1],+s0,+s1)/n));b.push(c.impliedRate);});
+    const W=1000;const anc=Array(S).fill(0);anc[0]=W;A.push(anc);b.push(W*kofr);          // anchor
+    const sl=Math.sqrt(lam);for(let i=0;i<S-1;i++){const r=Array(S).fill(0);r[i]=-sl;r[i+1]=sl;A.push(r);b.push(0);} // smoothness
+    const L=solveLS(A,b);
+    const segMeet=segs.map(([s0])=>meetings.find(m=>+dstr(m.date)===+s0));
+    let filled=0;
+    for(let i=0;i<S-1;i++){const m=segMeet[i+1];if(!m)continue;const step=(L[i+1]-L[i])*100;const d=stepToDist(step);m.pUp=(d[25]||0)+(d[50]||0);m.pDown=(d[-25]||0)+(d[-50]||0);filled++;}
+    stripInfo={segs:segs.map((s,i)=>({from:s[0],to:s[1],rate:L[i]})),used:cs.length,filled};
+    $("#stripMsg").textContent=`스트립 완료 · 계약 ${cs.length}개(λ=${lam}), 회의 ${filled}개. 앵커 KOFR ${kofr}%.`;
+    syncMeetingInputs();recompute();
+  }
+
+  // ---- render ----
+  function targetLabel(k){return (parseFloat($("#base").value)+(+k)/100).toFixed(2);}
+  function renderMeetings(){
+    $("#meetings").innerHTML=meetings.map((m,i)=>`
+      <div class="meeting-row"><div class="mdate">${m.label}<small>${m.date}</small></div>
+        <div class="pin down"><span>인하</span><input type="number" data-i="${i}" data-f="pDown" value="${Math.round(m.pDown*100)}" min="0" max="100" step="5"></div>
+        <div class="pin hold"><span>동결</span><div class="holdv" data-i="${i}">${Math.round((1-m.pUp-m.pDown)*100)}</div></div>
+        <div class="pin up"><span>인상</span><input type="number" data-i="${i}" data-f="pUp" value="${Math.round(m.pUp*100)}" min="0" max="100" step="5"></div></div>`).join("");
+    $("#meetings").querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{
+      const i=+e.target.dataset.i,f=e.target.dataset.f;let v=Math.max(0,Math.min(100,+e.target.value||0))/100;meetings[i][f]=v;
+      if(meetings[i].pUp+meetings[i].pDown>1){const o=f==="pUp"?"pDown":"pUp";meetings[i][o]=1-v;syncMeetingInputs();}recompute();}));
+  }
+  function syncMeetingInputs(){$("#meetings").querySelectorAll("input").forEach(inp=>{const i=+inp.dataset.i,f=inp.dataset.f;inp.value=Math.round(meetings[i][f]*100);});updateHold();}
+  function updateHold(){$("#meetings").querySelectorAll(".holdv").forEach(el=>{const i=+el.dataset.i;el.textContent=Math.round(Math.max(0,1-meetings[i].pUp-meetings[i].pDown)*100);});}
+  function renderContractInput(){
+    $("#cInput").innerHTML=`<thead><tr><th>결제월</th><th>정산가</th><th>내재%</th><th>OI</th></tr></thead><tbody>`+
+      DATA.contracts.map(c=>`<tr style="${c.oi>0?'':'opacity:.55'}"><td>${c.mat}</td><td class="num">${c.price.toFixed(3)}</td><td class="num">${c.impliedRate.toFixed(3)}</td><td class="num">${c.oi}</td></tr>`).join("")+`</tbody>`;
+  }
+  function renderRawTable(){
+    $("#rawTable").innerHTML=`<thead><tr><th>결제월</th><th>정산가</th><th>내재금리%</th><th>OI</th><th>유동성</th></tr></thead><tbody>`+
+      DATA.contracts.map(c=>`<tr><td>${c.mat}</td><td class="num">${c.price.toFixed(3)}</td><td class="num">${c.impliedRate.toFixed(3)}</td><td class="num">${c.oi}</td><td>${c.oi>0?'<span class="tag liq">유동</span>':'<span class="tag illiq">마크</span>'}</td></tr>`).join("")+`</tbody>`;
+  }
+  function renderSegTable(){
+    if(!stripInfo){$("#segTable").innerHTML="<tbody><tr><td>스트립 실행 시 표시</td></tr></tbody>";return;}
+    const f=d=>`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+    $("#segTable").innerHTML=`<thead><tr><th>구간(회의 사이)</th><th>기대 정책금리%</th></tr></thead><tbody>`+
+      stripInfo.segs.map(s=>`<tr><td class="num">${f(s.from)} ~ ${f(s.to)}</td><td class="num">${s.rate.toFixed(3)}</td></tr>`).join("")+`</tbody>`;
+  }
+  function recompute(){
+    const base=parseFloat($("#base").value)||0;$("#baseBadge").textContent=base.toFixed(2)+"%";
+    const steps=meetings.map(stepDist);
+    updateHold();renderBars(steps);renderPath(base);
+    renderMatrix(view==="cond"?conditional(steps):aggregated(steps));
+    $("#viewdesc").textContent=view==="cond"?"회의별 확률을 독립으로 보고 경로 전체를 합성한 누적 분포입니다. 같은 순변화라도 타이밍 불확실성이 분포의 퍼짐으로 나타납니다.":"현재 금리 대비 그 시점까지 반영된 순 인상·인하 횟수입니다. 언제 움직이는지는 무시하고 총량만 봅니다.";
+    // hero
+    const m0=meetings[0],up=m0.pUp,hold=Math.max(0,1-m0.pUp-m0.pDown),down=m0.pDown;
+    $("#heroDate").textContent=m0.label;
+    $("#heroLine").innerHTML=`인상 <span class="pct">${fmtPct(up)}</span> · 동결 ${fmtPct(hold)}${down>0.005?" · 인하 "+fmtPct(down):""}`;
+    const aggEnd=aggregated(steps).slice(-1)[0];let net=0;for(const k in aggEnd)net+=(+k)*aggEnd[k];
+    $("#heroStats").innerHTML=
+      `<div class="stat"><div class="k">8/27 인상</div><div class="v mono">${fmtPct(up)}</div></div>`+
+      `<div class="stat"><div class="k">연말까지 누적</div><div class="v mono">${net>=0?"+":""}${Math.round(net)}bp <small>≈${(net/25).toFixed(1)}회</small></div></div>`+
+      `<div class="stat"><div class="k">유동 계약</div><div class="v mono">${DATA.contracts.filter(c=>c.oi>0).length}<small>/${DATA.contracts.length}</small></div></div>`;
+    renderSegTable();
+  }
+  function renderBars(steps){
+    $("#bars").innerHTML=meetings.map((m,i)=>{const s=steps[i],up=(s[25]||0)+(s[50]||0),down=(s[-25]||0)+(s[-50]||0),hold=Math.max(0,1-up-down);
+      const seg=(cls,p,t)=>p<=0?"":`<div class="seg ${cls}" style="flex:${p}">${p>=0.12?t+" "+fmtPct(p):""}</div>`;
+      return `<div class="bar-row"><div class="bar-lab">${m.label}<small>${m.date.slice(5)}</small></div><div class="track">${seg("down",down,"인하")}${seg("hold",hold,"동결")}${seg("up",up,"인상")}</div></div>`;}).join("");
+  }
+  function renderMatrix(rows){
+    const keys=new Set();rows.forEach(r=>Object.keys(r).forEach(k=>keys.add(+k)));const ks=[...keys].sort((a,b)=>a-b);
+    const dir=k=>k>0?`<span class="dirchip up">▲${k/25}</span>`:k<0?`<span class="dirchip down">▼${-k/25}</span>`:`<span class="dirchip hold">동결</span>`;
+    let h=`<thead><tr><th style="text-align:left">회의</th>${ks.map(k=>`<th>${dir(k)}<span class="lvl">${targetLabel(k)}%</span></th>`).join("")}</tr></thead><tbody>`;
+    rows.forEach((r,i)=>{h+=`<tr><th>${meetings[i].label}<small>~${meetings[i].date.slice(5)}</small></th>`;
+      ks.forEach(k=>{const p=r[k]||0,on=p>0.5,bg=p>0?`background:color-mix(in srgb,var(--accent) ${Math.round(p*100)}%,var(--surface))`:"";
+        h+=`<td><div class="cell ${on?'on':(p>0?'':'dim')}" style="${bg};padding:9px 4px">${p>0.004?fmtPct(p):"·"}</div></td>`;});h+=`</tr>`;});
+    $("#matrix").innerHTML=h+"</tbody>";
+  }
+  function renderPath(base){
+    const pts=[{x:"현재",r:base}];let run=base;meetings.forEach(m=>{const s=stepDist(m);let e=0;for(const k in s)e+=(+k)*s[k];run+=e/100;pts.push({x:m.label,r:run});});
+    const W=520,H=200,pL=44,pR=52,pT=16,pB=28,rs=pts.map(p=>p.r),lo=Math.min(...rs)-0.12,hi=Math.max(...rs)+0.12;
+    const X=i=>pL+(W-pL-pR)*i/(pts.length-1),Y=r=>pT+(H-pT-pB)*(1-(r-lo)/(hi-lo));
+    let g="";for(let t=0;t<=4;t++){const r=lo+(hi-lo)*t/4,y=Y(r);g+=`<line class="gridline" x1="${pL}" y1="${y.toFixed(1)}" x2="${W-pR}" y2="${y.toFixed(1)}"/><text class="axis" x="${pL-8}" y="${(y+4).toFixed(1)}" text-anchor="end">${r.toFixed(2)}</text>`;}
+    const line=pts.map((p,i)=>`${i?"L":"M"}${X(i).toFixed(1)},${Y(p.r).toFixed(1)}`).join(" ");
+    const dots=pts.map((p,i)=>`<circle class="pathdot" cx="${X(i).toFixed(1)}" cy="${Y(p.r).toFixed(1)}" r="4.5"/><text class="axis" x="${X(i).toFixed(1)}" y="${H-9}" text-anchor="middle">${p.x}</text>`).join("");
+    const labs=pts.map((p,i)=>i===0?"":`<text class="pathlab" x="${X(i).toFixed(1)}" y="${(Y(p.r)-11).toFixed(1)}" text-anchor="middle">${p.r.toFixed(2)}</text>`).join("");
+    $("#pathChart").innerHTML=`<g class="axis">${g}</g><path class="pathline" d="${line}"/>${dots}${labs}`;
+  }
+
+  function applyData(){
+    $("#asofLabel").textContent=DATA.asOf;$("#srcLabel").textContent=DATA.source||"";
+    $("#base").value=DATA.baseRate;$("#kofr").value=DATA.kofr;
+    renderContractInput();renderRawTable();
+  }
+
+  // events
+  $("#base").addEventListener("input",recompute);
+  document.querySelectorAll("[role=tab]").forEach(t=>t.addEventListener("click",()=>{view=t.id==="tab-agg"?"agg":"cond";$("#tab-cond").setAttribute("aria-selected",view==="cond");$("#tab-agg").setAttribute("aria-selected",view==="agg");recompute();}));
+  $("#stripBtn").addEventListener("click",runStrip);
+  $("#incIlliq").addEventListener("change",runStrip);
+  $("#lam").addEventListener("input",e=>{lam=parseFloat(e.target.value);$("#lamv").textContent=lam.toFixed(1);runStrip();});
+  const root=document.documentElement;try{const sv=localStorage.getItem("bokwatch-theme");if(sv)root.setAttribute("data-theme",sv);}catch(e){}
+  $("#themebtn").addEventListener("click",()=>{const cur=root.getAttribute("data-theme"),mq=matchMedia("(prefers-color-scheme:dark)").matches,next=cur?(cur==="dark"?"light":"dark"):(mq?"light":"dark");root.setAttribute("data-theme",next);try{localStorage.setItem("bokwatch-theme",next);}catch(e){}});
+
+  $("#jsdump").textContent="function strip(contracts, meetings, kofr, λ){\n  // 1) 회의일로 구간 분할 → 각 계약 창의 일수가중 계수행렬 A\n  // 2) 앵커(첫 구간=현재 KOFR) + 평활 sqrt(λ)·(L_{s+1}-L_s) 행 추가\n  // 3) 최소자승 solveLS(A,b) → 구간금리 L → 회의 스텝 → 확률\n}\n// 검증: 참 경로 합성 → 스트립 → 정확 복원 (bokwatch_strip.py 자기검증)";
+
+  function boot(){applyData();renderMeetings();runStrip();}
+  // bokwatch_data.json 있으면(정적 배포 환경) 자동 사용, 없으면 내장 스냅샷
+  fetch("bokwatch_data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.contracts&&j.contracts.length){DATA=j;}}).catch(()=>{}).finally(boot);
+})();
+</script>
