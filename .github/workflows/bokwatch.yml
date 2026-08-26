@@ -1,0 +1,66 @@
+name: BOKwatch daily sync
+on:
+  schedule:
+    - cron: "0 9 * * 1-5"     # 09:00 UTC = 18:00 KST (평일). KOFR 정산가 게시 후.
+  workflow_dispatch: {}         # 수동 실행 버튼
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Fetch KRX KOFR 3M futures -> bokwatch_data.json
+        env:
+          KRX_AUTH_KEY: ${{ secrets.KRX_AUTH_KEY }}
+        run: |
+          python - <<'PY'
+          import os, json, urllib.request, datetime, sys
+          KEY = os.environ["KRX_AUTH_KEY"]
+          BASE = "https://data-dbg.krx.co.kr/svc/apis/drv/fut_bydd_trd"
+          def fetch(d):
+              req = urllib.request.Request(f"{BASE}?basDd={d}", headers={"AUTH_KEY": KEY})
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return json.loads(r.read().decode("utf-8")).get("OutBlock_1", [])
+          def norm(name, price, oi):
+              tok = name.strip().split()[-1]            # 202609
+              mat = f"{tok[:4]}-{tok[4:6]}"
+              p = float(str(price).replace(",", ""))
+              return {"mat": mat, "price": round(p, 4),
+                      "impliedRate": round(100 - p, 4),
+                      "oi": int(float(str(oi).replace(",", "") or 0))}
+          kst = datetime.timezone(datetime.timedelta(hours=9))
+          day = datetime.datetime.now(kst).date()
+          contracts, used = [], None
+          for back in range(0, 7):                       # 오늘부터 최대 6영업일 전까지 폴백
+              d = (day - datetime.timedelta(days=back)).strftime("%Y%m%d")
+              try:
+                  rows = fetch(d)
+              except Exception as e:
+                  print("fetch fail", d, e); continue
+              cs = []
+              for r in rows:
+                  nm = r.get("ISU_NM", "")
+                  # "3개월무위험금리 F 202609" 만 (SP=스프레드 제외), 정산가 존재
+                  if "무위험" in nm and " F " in nm and r.get("SETL_PRC"):
+                      cs.append(norm(nm, r["SETL_PRC"], r.get("ACC_OPNINT_QTY", "0")))
+              if cs:
+                  contracts = sorted(cs, key=lambda x: x["mat"]); used = d; break
+          if not contracts:
+              print("no KOFR data in last 7 days; keep existing file"); sys.exit(0)
+          out = {"asOf": f"{used[:4]}-{used[4:6]}-{used[6:]}",
+                 "baseRate": 2.75, "kofr": 2.75, "source": "KRX Open API",
+                 "contracts": contracts}
+          json.dump(out, open("bokwatch_data.json", "w"), ensure_ascii=False, indent=2)
+          print("wrote bokwatch_data.json asOf", out["asOf"], len(contracts), "contracts")
+          PY
+      - name: Commit if changed
+        run: |
+          git config user.name "bokwatch-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add bokwatch_data.json
+          git diff --cached --quiet || git commit -m "data: KRX sync $(TZ=Asia/Seoul date +%F)"
+          git push
