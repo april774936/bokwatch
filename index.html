@@ -154,8 +154,8 @@ footer a{color:var(--blue-strong)}
   <h2>Probabilities · 회의별 전 확률표</h2>
   <div class="tbl-scroll" id="heat"></div>
 
-  <h2 id="path">Expected Rate Path · 기대 정책금리 경로</h2>
-  <div class="path-wrap"><svg class="path" id="pathsvg" viewBox="0 0 640 250" preserveAspectRatio="xMidYMid meet" role="img" aria-label="기대 정책금리 경로"></svg></div>
+  <h2 id="path">Projected Rate Path · 예상 정책금리 경로</h2>
+  <div class="path-wrap"><svg class="path" id="pathsvg" viewBox="0 0 640 250" preserveAspectRatio="xMidYMid meet" role="img" aria-label="예상 정책금리 경로 (최대확률 레벨)"></svg></div>
 
   <h2 id="detail">Underlying Futures · KRX KOFR 3개월 선물</h2>
   <div class="tbl-scroll" id="raw"></div>
@@ -218,6 +218,8 @@ footer a{color:var(--blue-strong)}
       for(const[lvl,p]of dist){const add=(k,pp)=>{if(pp>0)nd.set(k,(nd.get(k)||0)+p*pp);};add(lvl-25,pd);add(lvl,ph);add(lvl+25,pu);}
       dist=nd;dists.push(new Map(dist));
     });
+    // 회의별 최빈(최대확률) 레벨 = 예상 정책금리
+    meet.forEach((m,i)=>{let bk=null,bp=-1;for(const[k,p]of dists[i]){if(p>bp){bp=p;bk=k;}}m.modalRate=bk/100;m.modalP=bp;});
     // x축 레벨 격자 = 전 회의 유효레벨 ∪ 현재
     const keys=new Set([Math.round(kofr*100)]);
     dists.forEach(dd=>{for(const[k,p]of dd)if(p>0.002)keys.add(k);});
@@ -235,7 +237,7 @@ footer a{color:var(--blue-strong)}
     $("#meetsel").innerHTML=ST.meet.map((m,i)=>{
       const u=m.pUp,dn=m.pDown,h=Math.max(0,1-u-dn);
       const tag=u>=0.5?`인상 ${pct(u)}`:dn>=0.5?`인하 ${pct(dn)}`:`동결 ${pct(h)}`;
-      return `<button data-i="${i}" class="${i===SEL?'on':''}"><div class="d">${fmtD(m.d)}</div><div class="s">${tag} · 기대 ${m.rate.toFixed(2)}%</div></button>`;
+      return `<button data-i="${i}" class="${i===SEL?'on':''}"><div class="d">${fmtD(m.d)}</div><div class="s">${tag} · 예상 ${m.modalRate.toFixed(2)}%</div></button>`;
     }).join("");
     $("#meetsel").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{SEL=+b.dataset.i;render();}));
     renderChart();renderHeat();renderPath();renderRaw();
@@ -268,12 +270,12 @@ footer a{color:var(--blue-strong)}
   }
   function renderHeat(){
     const {levels,dists,meet,kofr}=ST;
-    let head=`<tr><th>Meeting</th>`+levels.map(k=>`<th>${(k/100).toFixed(2)}%</th>`).join("")+`<th>기대</th></tr>`;
+    let head=`<tr><th>Meeting</th>`+levels.map(k=>`<th>${(k/100).toFixed(2)}%</th>`).join("")+`<th>예상</th></tr>`;
     let body=meet.map((m,i)=>{
       const dd=dists[i];
       return `<tr><td><b>${fmtD(m.d)}</b><br><span class="dir">${m.l}</span></td>`+
         levels.map(k=>{const p=dd.get(k)||0;return `<td class="hm num" style="${shade(p)}">${p<0.005?'·':pct(p)}</td>`;}).join("")+
-        `<td class="num"><b>${m.rate.toFixed(2)}%</b></td></tr>`;
+        `<td class="num"><b>${m.modalRate.toFixed(2)}%</b></td></tr>`;
     }).join("");
     $("#heat").innerHTML=`<table><thead>${head}</thead><tbody>${body}</tbody></table>`;
   }
@@ -285,7 +287,7 @@ footer a{color:var(--blue-strong)}
   }
   function renderPath(){
     const {meet,kofr}=ST;
-    const pts=[{x:"현재",r:kofr},...meet.map(m=>({x:m.l,r:m.rate}))];
+    const pts=[{x:"현재",r:kofr},...meet.map(m=>({x:m.l,r:m.modalRate}))];
     const W=640,H=250,pL=42,pR=44,pT=26,pB=34;
     const rs=pts.map(p=>p.r),lo=Math.min(...rs)-0.13,hi=Math.max(...rs)+0.13;
     const X=i=>pL+(W-pL-pR)*i/(pts.length-1), Y=r=>pT+(H-pT-pB)*(1-(r-lo)/(hi-lo));
