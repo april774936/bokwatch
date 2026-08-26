@@ -2,419 +2,170 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
-
 <style>
 :root{
-  --bg:#F2F5F5; --surface:#FFFFFF; --surface-2:#E9EEEE; --surface-3:#DFE6E6;
-  --ink:#0F1E1D; --ink-2:#41534F; --ink-3:#71827E; --line:#D5DEDD;
-  --accent:#0E7C86; --accent-strong:#0A5A62; --on-accent:#F3FBFB;
-  --up:#B4451B; --up-soft:#F3E0D6; --down:#1D6FB8; --down-soft:#DBE8F4; --hold:#5C6E6A;
-  --warn:#B8860B; --warn-soft:#F5ECD2;
-  --shadow:0 1px 2px rgba(15,30,29,.05),0 8px 24px -12px rgba(15,30,29,.14);
-  --radius:14px;
+  --bg:#F2F5F5;--surface:#FFFFFF;--surface-2:#E9EEEE;--surface-3:#DEE6E5;
+  --ink:#0F1E1D;--ink-2:#41534F;--ink-3:#72837F;--line:#D5DEDD;
+  --accent:#0E7C86;--accent-strong:#0A5A62;--on-accent:#F3FBFB;
+  --up:#B4451B;--up-soft:#F4E2D8;--hold:#5C6E6A;--hold-soft:#E4EAE9;
+  --shadow:0 1px 2px rgba(15,30,29,.05),0 10px 30px -14px rgba(15,30,29,.16);
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0B1212; --surface:#111B1A; --surface-2:#182423; --surface-3:#21302E;
-  --ink:#E9F1F0; --ink-2:#9DAFAB; --ink-3:#6E807C; --line:#243331;
-  --accent:#2BA7B0; --accent-strong:#57C4CB; --on-accent:#04191B;
-  --up:#E4794C; --up-soft:#3A241A; --down:#5AA0DC; --down-soft:#16283A; --hold:#859894;
-  --warn:#D9B45A; --warn-soft:#2E2812;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -14px rgba(0,0,0,.6);
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B1212;--surface:#111B1A;--surface-2:#182423;--surface-3:#22302E;
+  --ink:#E9F1F0;--ink-2:#9DAFAB;--ink-3:#6E807C;--line:#243331;
+  --accent:#2BA7B0;--accent-strong:#5CC6CD;--on-accent:#04191B;
+  --up:#E4794C;--up-soft:#3A241A;--hold:#8B9C98;--hold-soft:#1B2624;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -16px rgba(0,0,0,.7);
 }}
 :root[data-theme="dark"]{
-  --bg:#0B1212; --surface:#111B1A; --surface-2:#182423; --surface-3:#21302E;
-  --ink:#E9F1F0; --ink-2:#9DAFAB; --ink-3:#6E807C; --line:#243331;
-  --accent:#2BA7B0; --accent-strong:#57C4CB; --on-accent:#04191B;
-  --up:#E4794C; --up-soft:#3A241A; --down:#5AA0DC; --down-soft:#16283A; --hold:#859894;
-  --warn:#D9B45A; --warn-soft:#2E2812;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -14px rgba(0,0,0,.6);
+  --bg:#0B1212;--surface:#111B1A;--surface-2:#182423;--surface-3:#22302E;
+  --ink:#E9F1F0;--ink-2:#9DAFAB;--ink-3:#6E807C;--line:#243331;
+  --accent:#2BA7B0;--accent-strong:#5CC6CD;--on-accent:#04191B;
+  --up:#E4794C;--up-soft:#3A241A;--hold:#8B9C98;--hold-soft:#1B2624;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -16px rgba(0,0,0,.7);
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
 .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
-.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 76px}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px}
-.brand{display:flex;flex-direction:column;gap:6px}
+.wrap{max-width:680px;margin:0 auto;padding:44px 22px 72px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
 .eyebrow{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-strong);font-weight:600}
-h1{font-size:clamp(30px,5vw,46px);margin:0;font-weight:700;letter-spacing:-.02em;line-height:1}
-.sub{color:var(--ink-2);font-size:14.5px;max-width:58ch}
-.headmeta{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-.themebtn{background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);border-radius:9px;padding:7px 10px;cursor:pointer;font:inherit;font-size:12.5px}
-.themebtn:hover{color:var(--ink)}
-.asof{font-size:12px;color:var(--ink-3)}
+h1{font-size:40px;margin:6px 0 0;font-weight:700;letter-spacing:-.02em}
+.asof{font-size:12.5px;color:var(--ink-3);text-align:right;line-height:1.7}
 .asof b{color:var(--ink-2);font-weight:600}
+.lead{color:var(--ink-2);font-size:15px;margin:12px 0 0;max-width:56ch}
 
-/* headline hero */
-.hero{margin:22px 0 6px;background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 12%,var(--surface)),var(--surface));
-  border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:24px 26px;display:flex;flex-wrap:wrap;gap:26px;align-items:center;justify-content:space-between}
-.hero .lead{display:flex;flex-direction:column;gap:4px}
-.hero .lead .q{font-size:13px;color:var(--ink-2);letter-spacing:.02em}
-.hero .lead .big{font-size:clamp(26px,4vw,38px);font-weight:700;letter-spacing:-.01em}
-.hero .lead .big .pct{color:var(--accent-strong)}
-.hero .split{display:flex;gap:10px;flex-wrap:wrap}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 15px;min-width:104px}
-.stat .k{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
-.stat .v{font-size:22px;font-weight:600;margin-top:2px}
-.stat .v small{font-size:12px;color:var(--ink-3);font-weight:400}
+.hero{margin:30px 0 8px;background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 13%,var(--surface)),var(--surface));
+  border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:26px 28px}
+.hero .q{font-size:13.5px;color:var(--ink-2)}
+.hero .big{font-size:clamp(30px,6vw,42px);font-weight:700;letter-spacing:-.01em;margin-top:4px;line-height:1.05}
+.hero .big em{font-style:normal;color:var(--accent-strong)}
+.hero .cap{font-size:13px;color:var(--ink-3);margin-top:8px}
 
-.rule{height:1px;background:var(--line);margin:22px 0 24px}
-.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
-@media(max-width:840px){.grid2{grid-template-columns:1fr}}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
-.card h2{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin:0 0 15px;font-weight:600}
-.card h2 .hint{text-transform:none;letter-spacing:0;color:var(--ink-3);font-weight:400;font-size:12px}
-.field{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
-.field label{font-size:13.5px;color:var(--ink-2)}
-input[type=number]{width:92px;font-family:"IBM Plex Mono",monospace;font-size:14px;text-align:right;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--ink)}
-input[type=number]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
-.meeting-row{display:grid;grid-template-columns:1fr auto auto auto;gap:9px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
-.meeting-row:first-of-type{border-top:none}
-.mdate{font-weight:600;font-size:14.5px}
-.mdate small{display:block;color:var(--ink-3);font-weight:400;font-size:11.5px}
-.pin{display:flex;flex-direction:column;gap:3px;align-items:center}
-.pin span{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
-.pin input{width:64px;padding:5px 6px}
-.pin.up input{border-color:color-mix(in srgb,var(--up) 45%,var(--line))}
-.pin.down input{border-color:color-mix(in srgb,var(--down) 45%,var(--line))}
-.pin.hold .holdv{width:64px;text-align:center;padding:6px;border-radius:8px;background:var(--surface-3);color:var(--hold);font-family:"IBM Plex Mono",monospace;font-size:14px;font-weight:600;border:1px dashed color-mix(in srgb,var(--hold) 40%,var(--line))}
-.lam{display:flex;align-items:center;gap:12px;margin:6px 0 16px}
-.lam label{font-size:13px;color:var(--ink-2);white-space:nowrap}
-.lam input[type=range]{flex:1;accent-color:var(--accent)}
-.lam .lv{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-2);width:30px;text-align:right}
-details.adv{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
-details.adv summary{cursor:pointer;font-size:13px;color:var(--accent-strong);font-weight:600;list-style:none}
-details.adv summary::-webkit-details-marker{display:none}
-details.adv summary::before{content:"▸ ";color:var(--accent)}
-details.adv[open] summary::before{content:"▾ "}
-.chkrow{display:flex;align-items:center;gap:8px;margin:12px 0 4px;font-size:12.5px;color:var(--ink-2)}
-.btn{margin-top:10px;background:var(--accent);color:var(--on-accent);border:none;border-radius:9px;padding:9px 14px;font:inherit;font-weight:600;font-size:13px;cursor:pointer}
-.btn:hover{background:var(--accent-strong)}
-.btn.ghost{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
-.note{font-size:12px;color:var(--ink-3);margin-top:9px;line-height:1.5}
-.viewtabs{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
-.viewtabs button{border:none;background:transparent;color:var(--ink-2);font:inherit;font-size:13px;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer}
-.viewtabs button[aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.viewdesc{font-size:12.5px;color:var(--ink-2);margin:8px 2px 14px}
-.matrix-scroll,.tbl-scroll{overflow-x:auto}
-table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:13.5px}
-table.mx th,table.mx td{padding:9px 8px;text-align:center}
-table.mx thead th{font-weight:600;color:var(--ink-2);font-size:12px;border-bottom:1px solid var(--line);white-space:nowrap}
-table.mx thead th .lvl{display:block;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink)}
-table.mx tbody th{text-align:left;font-weight:600;white-space:nowrap;padding-right:14px}
-table.mx tbody th small{display:block;color:var(--ink-3);font-weight:400;font-size:11px}
-.cell{border-radius:8px;font-family:"IBM Plex Mono",monospace;font-weight:500}
-.cell.on{color:var(--on-accent)} .cell.dim{color:var(--ink-3)}
-.dirchip{display:inline-block;font-size:10px;letter-spacing:.05em;padding:1px 6px;border-radius:20px;font-weight:600}
-.dirchip.up{background:var(--up-soft);color:var(--up)} .dirchip.down{background:var(--down-soft);color:var(--down)} .dirchip.hold{background:var(--surface-3);color:var(--hold)}
-.bars{display:flex;flex-direction:column;gap:14px;margin-top:2px}
-.bar-row{display:grid;grid-template-columns:74px 1fr;gap:12px;align-items:center}
-.bar-lab{font-size:13px;font-weight:600}
-.bar-lab small{display:block;color:var(--ink-3);font-weight:400;font-size:11px}
-.track{display:flex;height:26px;border-radius:7px;overflow:hidden;background:var(--surface-2);border:1px solid var(--line)}
-.seg{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;min-width:0;white-space:nowrap}
-.seg.hold{background:var(--hold)} .seg.up{background:var(--up)} .seg.down{background:var(--down)}
-svg.path{width:100%;height:200px;display:block;margin-top:6px}
-.axis text{fill:var(--ink-3);font-size:11px;font-family:"IBM Plex Mono",monospace}
-.gridline{stroke:var(--line);stroke-width:1}
-.pathline{fill:none;stroke:var(--accent);stroke-width:2.5}
-.pathdot{fill:var(--surface);stroke:var(--accent);stroke-width:2.5}
-.pathlab{fill:var(--ink);font-size:11.5px;font-family:"IBM Plex Mono",monospace;font-weight:600}
-/* data tables */
-table.data{border-collapse:collapse;width:100%;font-size:13px;min-width:520px}
-table.data th,table.data td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right}
-table.data th{color:var(--ink-3);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em}
-table.data td:first-child,table.data th:first-child{text-align:left}
-table.data td.num{font-family:"IBM Plex Mono",monospace}
-.tag{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:20px}
-.tag.liq{background:var(--down-soft);color:var(--down)} .tag.illiq{background:var(--warn-soft);color:var(--warn)}
-pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.55;color:var(--ink-2)}
-pre.code b{color:var(--accent-strong);font-weight:600}
-.method p{font-size:13.5px;color:var(--ink-2);margin:0 0 10px}
-.method h3{font-size:14px;margin:18px 0 8px;color:var(--ink)}
-footer{margin-top:28px;color:var(--ink-3);font-size:12px;line-height:1.6}
-footer b{color:var(--ink-2);font-weight:600}
-a{color:var(--accent-strong)}
+h2{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:38px 0 14px}
+.tbl-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:440px}
+th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line)}
+th{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+tbody tr:last-child td{border-bottom:none}
+td.num{font-family:"IBM Plex Mono",monospace}
+td.mut{color:var(--ink-3)}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.pill.up{background:var(--up-soft);color:var(--up)}
+.pill.hold{background:var(--hold-soft);color:var(--hold)}
+.pill.mark{background:var(--surface-2);color:var(--ink-3)}
+.mrow td:first-child b{font-weight:600}
+.mrow td:first-child small{display:block;color:var(--ink-3);font-weight:400;font-size:11px}
+
+.note{margin:22px 0 0;padding:18px 20px;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;font-size:13.5px;color:var(--ink-2);line-height:1.7}
+.note b{color:var(--ink)}
+.note .k{color:var(--accent-strong);font-weight:600}
+footer{margin-top:30px;font-size:12px;color:var(--ink-3);line-height:1.7}
+footer a{color:var(--accent-strong)}
+.themebtn{background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);border-radius:9px;padding:6px 10px;cursor:pointer;font:inherit;font-size:12px}
 </style>
 
 <div class="wrap">
-  <header>
-    <div class="brand">
-      <span class="eyebrow">KOFR 선물 내재 · 한국은행 금통위</span>
+  <div class="top">
+    <div>
+      <div class="eyebrow">KOFR 선물 내재 · 한국은행 금통위</div>
       <h1>BOKwatch</h1>
-      <p class="sub">KOFR 3개월 선물에 반영된 시장 기대를 FedWatch 방식으로 변환해, 금융통화위원회 회의별 기준금리 결정 확률을 산출합니다.</p>
     </div>
-    <div class="headmeta">
+    <div style="text-align:right">
       <button class="themebtn" id="themebtn" type="button">◐ 테마</button>
-      <div class="asof">데이터 기준 <b id="asofLabel">—</b> · <span id="srcLabel">—</span></div>
-      <div class="asof">현 기준금리 <b id="baseBadge" class="mono">2.75%</b></div>
+      <div class="asof" style="margin-top:8px">데이터 <b id="asof">—</b><br>현 기준금리 <b id="base" class="mono">2.75%</b></div>
     </div>
-  </header>
+  </div>
+  <p class="lead">KRX KOFR 3개월 선물 정산가에서 시장이 반영한 금통위 기준금리 결정을 <b>산출</b>합니다. (예측이 아닌 시장가 기반 산출.)</p>
 
-  <!-- HERO / HEADLINE -->
   <div class="hero">
-    <div class="lead">
-      <span class="q">다음 금통위 <b id="heroDate">8/27</b> · 시장 반영</span>
-      <span class="big" id="heroLine">인상 <span class="pct">—</span></span>
-    </div>
-    <div class="split" id="heroStats"></div>
-  </div>
-  <p class="note" style="margin:0 0 8px">※ KRX KOFR 3개월 선물 정산가에서 <b>산출</b>한 시장 내재 확률이며 예측이 아닙니다. FedWatch 누적(Aggregated) 방식 — 계약 내재금리가 단조↑라 인하 아티팩트가 없습니다. 유동성(OI)이 얇아 개별 회의 타이밍은 저확신. 교육·리서치용, 투자자문 아님.</p>
-
-  <div class="rule"></div>
-
-  <div class="grid2">
-    <section class="card">
-      <h2>입력 <span class="hint">— 회의별 시장 기대</span></h2>
-      <div class="field"><label for="base">현 기준금리 (%)</label><input type="number" id="base" value="2.75" step="0.25" min="0" max="6"></div>
-      <div class="field"><label for="kofr">현재 KOFR (%) <span style="color:var(--ink-3);font-size:12px">· 스트립 앵커</span></label><input type="number" id="kofr" value="2.75" step="0.01" min="0" max="6"></div>
-      <div id="meetings"></div>
-
-      <details class="adv" open>
-        <summary>KOFR 선물 정산가 → 자동 산출 (스트리핑)</summary>
-        <div class="lam" style="display:none"><input type="range" id="lam" min="0" max="4" step="0.5" value="1"><span id="lamv"></span></div>
-        <div class="note" style="margin-top:0">방식: 계약 내재금리에서 실현 과거(6월 2.50 / 7·16 이후 2.75)를 뺀 <b>기대 forward 평균</b> → 현재 대비 <b>누적 인상횟수</b>. 계약가가 단조↑라 인하 아티팩트가 원천적으로 없음. 최소자승·정칙화 미사용.</div>
-        <div class="tbl-scroll" style="margin-top:12px"><table class="data" id="cInput"></table></div>
-        <label class="chkrow"><input type="checkbox" id="incIlliq"> OI=0(호가 마크)까지 포함</label>
-        <div style="display:flex;gap:8px"><button class="btn" id="stripBtn" type="button">스트립 실행 → 확률 갱신</button></div>
-        <p class="note" id="stripMsg"></p>
-      </details>
-    </section>
-
-    <section class="card">
-      <h2>회의별 결정 확률 <span class="hint">— 개별 회의</span></h2>
-      <div class="bars" id="bars"></div>
-      <h2 style="margin-top:24px">기대 정책금리 경로</h2>
-      <svg class="path" id="pathChart" viewBox="0 0 520 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="기대 정책금리 경로"></svg>
-    </section>
+    <div class="q">다음 금통위 <b id="hd">8/27</b> · 시장 반영</div>
+    <div class="big" id="hl">—</div>
+    <div class="cap" id="hc"></div>
   </div>
 
-  <section class="card" style="margin-top:20px">
-    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px">
-      <div class="viewtabs" role="tablist"><button role="tab" id="tab-cond" aria-selected="true">Conditional</button><button role="tab" id="tab-agg" aria-selected="false">Aggregated</button></div>
-      <div style="font-size:12px;color:var(--ink-3)">셀 = 해당 시점까지 그 금리수준일 확률</div>
-    </div>
-    <p class="viewdesc" id="viewdesc"></p>
-    <div class="matrix-scroll"><table class="mx" id="matrix"></table></div>
-  </section>
+  <h2>회의별 산출</h2>
+  <div class="tbl-scroll"><table id="meet"></table></div>
 
-  <!-- DETAILED DATASET + METHOD -->
-  <section class="card" style="margin-top:20px">
-    <h2>세부 데이터셋 <span class="hint">— 원자료 · 스트립 중간값 · 방법론</span></h2>
-    <h3 style="font-size:14px;margin:4px 0 8px">① KRX KOFR 3개월 선물 (원자료)</h3>
-    <div class="tbl-scroll"><table class="data" id="rawTable"></table></div>
-    <h3 style="font-size:14px;margin:20px 0 8px">② 회의별 산출 <span style="font-weight:400;color:var(--ink-3);font-size:12px">(FedWatch 누적방식 · 계약 1개=회의 1개)</span></h3>
-    <div class="tbl-scroll"><table class="data" id="segTable"></table></div>
+  <h2>KRX KOFR 3개월 선물 (2026-08-24 정산가)</h2>
+  <div class="tbl-scroll"><table id="raw"></table></div>
 
-    <details class="adv" open style="margin-top:18px">
-      <summary>③ 방법론 & 함수 (코드 공개)</summary>
-      <div class="method" style="margin-top:12px">
-        <p><b>FedWatch 원칙 2개만 사용.</b> ① 회의 있는 구간은 그 구간을 담는 계약가로 산출. ② EFFR(End)=다음 구간 EFFR(Start) (경로 연속). 최소자승·정칙화는 쓰지 않는다 — 얇은 계약에 억지 적합하면 헛된 인하가 생기기 때문.</p>
-        <pre class="code">1) 내재금리    R = 100 − 정산가
-2) forward평균  fwd = (R·n − Σ실현과거) / 잔존일수     (실현: 6월 2.50 / 7·16 이후 2.75)
-3) 누적 인상   cum = (fwd − 현재금리) / 25bp            ← 계약가 단조↑ ⇒ cum 단조 ⇒ 인하 없음
-4) 회의 스텝   step(회의) = cum(그 회의 이후 최근접 유동계약) − cum(직전 회의)
-5) 확률        step(bp)/25 를 인접 격자에 배분 (FedWatch 정수·소수부)</pre>
-        <p><b>두 뷰.</b> Aggregated = 현재 대비 누적 인상횟수(위 cum). Conditional = 회의별 스텝을 컨볼루션한 누적 결과분포. CME FedWatch Aggregated Enhancement와 동형.</p>
-        <pre class="code" id="jsdump"></pre>
-        <p class="note">이 페이지의 계산은 위 5줄 그대로의 JS 이식이며 전부 브라우저 로컬 실행. 핵심: 백워드 3M 선물은 창의 대부분이 실현 과거라 <b>실현 정책금리 경로를 반드시 차감</b>해야 하고, 그러면 계약가 단조성이 그대로 살아 인하 아티팩트가 없다.</p>
-      </div>
-    </details>
-
-    <h3 style="font-size:14px;margin:18px 0 8px">④ 자동 동기화</h3>
-    <p class="method" style="margin:0">매 영업일 <b>GitHub Actions</b>(무료 크론)가 KRX 데이터를 받아 <code>bokwatch_data.json</code>을 갱신 → 이 페이지가 로드. 이 페이지도 <code>bokwatch_data.json</code>이 있으면 자동으로 그 값을 씁니다(없으면 내장 스냅샷). 소스: KRX Open API(승인키) 또는 data.krx CSV. 스크립트 <b>sync/krx_sync.py</b>, 워크플로 <b>bokwatch.yml</b>.</p>
-  </section>
+  <div class="note">
+    <b>어떻게 읽나.</b> 이 선물은 <span class="k">만기 직전 3개월 평균(복리) KOFR</span>로 수렴합니다 — 현재금리(스팟)가 아니라 트레일링 평균. 그래서 정산가를 현재 2.75%와 직접 비교하면 안 되고, <span class="k">"그 계약이 동결이면 얼마인가"</span>와 비교합니다.<br><br>
+    9월물이 2.755%로 현재와 비슷해 보이지만, 창(6~9월)에 <b>7·16 인상 전 6월(2.50%)</b>이 섞여 동결 기준선이 2.67%로 내려갑니다. 실제가 그보다 높으니 인상. 6월이 안 섞인 <b>10·11·12월물</b>은 동결 기준선이 딱 2.75%인데 정산가는 그보다 낮게(=금리 높게) 거래 → 인상이 명확합니다.
+  </div>
 
   <footer>
-    <b>데이터</b> · KRX KOFR 3개월 선물 정산가·미결제약정(OI). 유동물(OI&gt;0) 위주로 산출하며 2027물은 호가 마크(OI=0). 방식은 FedWatch 누적(실현경로 차감). <b>KOFR-OIS</b> 회의일자 분해가 최정밀이나 무료 접근 편의상 선물을 씀.<br>
-    <b>주의</b> · 모든 계산은 브라우저 로컬. 시장가 반영 <b>산출</b>이며 예측·투자자문 아님.
+    <b>데이터</b> KRX KOFR 3개월 선물 정산가·미결제약정(OI). 기초자산 = KOFR 3개월 복리금리, 만기 직전 3개월 참조, 100−금리 표시 (KRX 파생상품시장 업무규정 제25조). 유동물(OI&gt;0) 위주 산출, 2027물은 호가 마크.<br>
+    <b>주의</b> 브라우저 로컬 계산. 시장가 반영 산출이며 예측·투자자문 아님. 개별 회의 타이밍은 저유동성으로 저확신.<br>
+    상세 인터랙티브 버전 · 방법론: <a href="https://claude.ai/code/artifact/1e4e9092-4130-430b-b9c8-40fe005488a6">아티팩트</a>
   </footer>
 </div>
 
 <script>
 (function(){
   "use strict";
-  const UNIT=25, $=s=>document.querySelector(s);
-  const fmtPct=x=>Math.round(x*100)+"%";
-
-  // ---- embedded snapshot (fallback); overridden by bokwatch_data.json if present ----
-  let DATA={
-    asOf:"2026-08-24", baseRate:2.75, kofr:2.75, source:"내장 스냅샷 (KRX CSV, 2026-08-24)",
+  let DATA={asOf:"2026-08-24",baseRate:2.75,kofr:2.75,
     contracts:[
       {mat:"2026-09",price:97.245,impliedRate:2.755,oi:350},
       {mat:"2026-10",price:97.075,impliedRate:2.925,oi:30},
-      {mat:"2026-11",price:96.97, impliedRate:3.03, oi:90},
+      {mat:"2026-11",price:96.97,impliedRate:3.03,oi:90},
       {mat:"2026-12",price:96.955,impliedRate:3.045,oi:20},
       {mat:"2027-01",price:96.805,impliedRate:3.195,oi:0},
       {mat:"2027-02",price:96.675,impliedRate:3.325,oi:0},
-      {mat:"2027-03",price:96.57, impliedRate:3.43, oi:0},
-      {mat:"2027-06",price:96.305,impliedRate:3.695,oi:0}
-    ]
-  };
-  const meetings=[
-    {label:"8/27",date:"2026-08-27",pUp:0.55,pDown:0},
-    {label:"10/22",date:"2026-10-22",pUp:0.40,pDown:0},
-    {label:"11/26",date:"2026-11-26",pUp:0.20,pDown:0},
-  ];
-  let view="cond", lam=1.0, stripInfo=null;
+      {mat:"2027-03",price:96.57,impliedRate:3.43,oi:0},
+      {mat:"2027-06",price:96.305,impliedRate:3.695,oi:0}]};
+  const MEET=[{l:"8/27",d:"2026-08-27"},{l:"10/22",d:"2026-10-22"},{l:"11/26",d:"2026-11-26"}];
+  const HIKE716=Date.UTC(2026,6,16), DAY=86400000;
+  const $=s=>document.querySelector(s);
+  const dstr=s=>{const[y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d||15);};
+  function thirdWed(y,m){let c=0;for(let d=1;d<=28;d++){if(new Date(Date.UTC(y,m-1,d)).getUTCDay()===3&&++c===3)return Date.UTC(y,m-1,d);}}
+  function win(mat){const[y,m]=mat.split("-").map(Number);const e=thirdWed(y,m);return[e-90*DAY,e];}
+  function realized(t,kofr){return t<HIKE716?2.50:kofr;}
 
-  // ---- math ----
-  function convolve(a,b){const o={};for(const ka in a)for(const kb in b){const k=(+ka)+(+kb);o[k]=(o[k]||0)+a[ka]*b[kb];}return o;}
-  function stepDist(m){const h=Math.max(0,1-m.pUp-m.pDown),d={};if(m.pDown>1e-9)d[-25]=m.pDown;if(h>1e-9)d[0]=h;if(m.pUp>1e-9)d[25]=m.pUp;return d;}
-  function conditional(steps){let cum={0:1};const rows=[];for(const s of steps){cum=convolve(cum,s);const r={};for(const k in cum)if(cum[k]>5e-4)r[k]=cum[k];rows.push(r);}return rows;}
-  function splitUnits(net){const lo=UNIT*Math.floor(net/UNIT),hi=lo+UNIT,ph=hi===lo?0:(net-lo)/(hi-lo),d={};if(1-ph>5e-4)d[lo]=1-ph;if(ph>5e-4)d[hi]=ph;return d;}
-  function aggregated(steps){let run=0;const rows=[];for(const s of steps){let e=0;for(const k in s)e+=(+k)*s[k];run+=e;rows.push(splitUnits(run));}return rows;}
-  function stepToDist(bp){const lo=UNIT*Math.floor(bp/UNIT),hi=lo+UNIT,ph=hi===lo?0:(bp-lo)/(hi-lo),d={};if(1-ph>5e-3)d[lo]=1-ph;if(ph>5e-3)d[hi]=ph;return d;}
-
-  // ---- strip (ridge least squares) ----
-  function dstr(s){const[y,m,d]=s.split("-").map(Number);return new Date(Date.UTC(y,m-1,d||15));}
-  function days(a,b){return Math.round((b-a)/86400000);}
-  function overlap(a0,a1,b0,b1){const lo=Math.max(a0,b0),hi=Math.min(a1,b1);return Math.max(0,days(new Date(lo),new Date(hi)));}
-  function thirdWed(y,m){let c=0;for(let d=1;d<=28;d++){const dt=new Date(Date.UTC(y,m-1,d));if(dt.getUTCDay()===3){if(++c===3)return dt;}}}
-  function matWindow(mat){const[y,m]=mat.split("-").map(Number);const e=thirdWed(y,m);const s=new Date(e);s.setUTCDate(s.getUTCDate()-90);return[s,e];}
-  // 실현 KOFR 경로: 2026-07-16 인상 전 2.50, 이후 preRate(현재 KOFR). 회의前(오늘 이후 8/27 전 포함) 전부 확정.
-  const HIKE716=Date.UTC(2026,6,16);
-  function realizedRate(tms,preRate){return tms<HIKE716?2.50:preRate;}
-  function solveLS(A,b){const n=A[0].length,AtA=Array.from({length:n},()=>Array(n).fill(0)),Atb=Array(n).fill(0);
-    for(let i=0;i<A.length;i++)for(let j=0;j<n;j++){Atb[j]+=A[i][j]*b[i];for(let k=0;k<n;k++)AtA[j][k]+=A[i][j]*A[i][k];}
-    for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(AtA[r][c])>Math.abs(AtA[p][c]))p=r;[AtA[c],AtA[p]]=[AtA[p],AtA[c]];[Atb[c],Atb[p]]=[Atb[p],Atb[c]];
-      const pv=AtA[c][c]||1e-9;for(let r=0;r<n;r++){if(r===c)continue;const f=AtA[r][c]/pv;for(let k=c;k<n;k++)AtA[r][k]-=f*AtA[c][k];Atb[r]-=f*Atb[c];}}
-    return Atb.map((v,i)=>v/(AtA[i][i]||1e-9));}
-  // ── FedWatch 누적(Aggregated) 방식: 최소자승·정칙화 없음, 계약 1개=회의 1개 ──
-  // 1) 각 계약 내재금리에서 '실현 과거'(6월 2.50 / 7/16 이후 2.75)를 빼 '오늘 이후 만기까지 기대 평균금리(fwd)' 산출
-  // 2) 누적 인상횟수 = (fwd − 현재)/25bp   (계약가가 단조↑ → 누적도 단조 → 인하 아티팩트 원천봉쇄)
-  // 3) 회의 스텝 = 그 회의 이후 만기하는 '충분히 두꺼운(잔존 forward≥30일)' 최근접 계약의 누적 − 직전 회의 누적
-  function fwdAvg(c,kofr,todayMs){
-    const[w0,w1]=matWindow(c.mat);let before=0,after=0;
-    for(let t=+w0;t<+w1;t+=86400000){ if(t<todayMs) before+=realizedRate(t,kofr); else after++; }
-    return after>0?{fwd:(c.impliedRate*days(w0,w1)-before)/after, after, mat:+w1}:null;
-  }
-  function runStrip(){
-    const kofr=parseFloat($("#kofr").value)||2.75;
-    const incIlliq=$("#incIlliq").checked;
-    const cs=DATA.contracts.filter(c=>incIlliq||c.oi>0).slice().sort((a,b)=>a.mat<b.mat?-1:1);
-    const [ay,am,ad]=DATA.asOf.split("-").map(Number); const todayMs=Date.UTC(ay,am-1,ad);
-    const fa=cs.map(c=>({c,...(fwdAvg(c,kofr,todayMs)||{})})).filter(x=>x.fwd!=null);
-    if(!fa.length){$("#stripMsg").textContent="계약 없음.";return;}
-    let prevCum=0; const path=[{label:"현재",rate:kofr,cum:0,pick:"—"}];
-    meetings.forEach(m=>{
-      const md=+dstr(m.date);
-      const pick=fa.find(x=>x.mat>=md && x.after>=30) || fa.find(x=>x.mat>=md) || fa[fa.length-1];
-      const cum=(pick.fwd-kofr)/0.25;
-      const step=(cum-prevCum)*25;                 // bp
-      const d=stepToDist(step);
-      m.pUp=Math.min(1,(d[25]||0)+(d[50]||0)); m.pDown=Math.min(1,(d[-25]||0)+(d[-50]||0));
-      path.push({label:m.label,rate:kofr+cum*0.25,cum,pick:pick.c.mat});
-      prevCum=cum;
+  function compute(){
+    const kofr=DATA.kofr||2.75, today=dstr(DATA.asOf);
+    // per-contract: fwd avg (실현 차감), hold baseline (동결이면)
+    const rows=DATA.contracts.map(c=>{
+      const[w0,w1]=win(c.mat);let before=0,after=0,hold=0,n=0;
+      for(let t=w0;t<w1;t+=DAY){n++;hold+=(t<today?realized(t,kofr):kofr);if(t<today)before+=realized(t,kofr);else after++;}
+      const fwd=after>0?(c.impliedRate*n-before)/after:c.impliedRate;
+      const holdRate=hold/n;
+      const v=c.oi<=0?"mark":(c.impliedRate>holdRate+0.03?"up":(c.impliedRate<holdRate-0.03?"cut":"hold"));
+      return {...c,fwd,holdRate,v,after,mat_end:w1};
     });
-    stripInfo={path,fa:fa.map(x=>({mat:x.c.mat,fwd:x.fwd,cum:(x.fwd-kofr)/0.25,oi:x.c.oi})),used:cs.length};
-    $("#stripMsg").textContent=`산출 완료 · 계약 ${cs.length}개. 실현경로(6월 2.50→7/16 2.75) 차감 후 누적방식. 최소자승·정칙화 없음 → 단조(인하 아티팩트 없음).`;
-    syncMeetingInputs();recompute();
-  }
-
-  // ---- render ----
-  function targetLabel(k){return (parseFloat($("#base").value)+(+k)/100).toFixed(2);}
-  function renderMeetings(){
-    $("#meetings").innerHTML=meetings.map((m,i)=>`
-      <div class="meeting-row"><div class="mdate">${m.label}<small>${m.date}</small></div>
-        <div class="pin down"><span>인하</span><input type="number" data-i="${i}" data-f="pDown" value="${Math.round(m.pDown*100)}" min="0" max="100" step="5"></div>
-        <div class="pin hold"><span>동결</span><div class="holdv" data-i="${i}">${Math.round((1-m.pUp-m.pDown)*100)}</div></div>
-        <div class="pin up"><span>인상</span><input type="number" data-i="${i}" data-f="pUp" value="${Math.round(m.pUp*100)}" min="0" max="100" step="5"></div></div>`).join("");
-    $("#meetings").querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{
-      const i=+e.target.dataset.i,f=e.target.dataset.f;let v=Math.max(0,Math.min(100,+e.target.value||0))/100;meetings[i][f]=v;
-      if(meetings[i].pUp+meetings[i].pDown>1){const o=f==="pUp"?"pDown":"pUp";meetings[i][o]=1-v;syncMeetingInputs();}recompute();}));
-  }
-  function syncMeetingInputs(){$("#meetings").querySelectorAll("input").forEach(inp=>{const i=+inp.dataset.i,f=inp.dataset.f;inp.value=Math.round(meetings[i][f]*100);});updateHold();}
-  function updateHold(){$("#meetings").querySelectorAll(".holdv").forEach(el=>{const i=+el.dataset.i;el.textContent=Math.round(Math.max(0,1-meetings[i].pUp-meetings[i].pDown)*100);});}
-  function renderContractInput(){
-    $("#cInput").innerHTML=`<thead><tr><th>결제월</th><th>정산가</th><th>내재%</th><th>OI</th></tr></thead><tbody>`+
-      DATA.contracts.map(c=>`<tr style="${c.oi>0?'':'opacity:.55'}"><td>${c.mat}</td><td class="num">${c.price.toFixed(3)}</td><td class="num">${c.impliedRate.toFixed(3)}</td><td class="num">${c.oi}</td></tr>`).join("")+`</tbody>`;
-  }
-  function renderRawTable(){
-    $("#rawTable").innerHTML=`<thead><tr><th>결제월</th><th>정산가</th><th>내재금리%</th><th>OI</th><th>유동성</th></tr></thead><tbody>`+
-      DATA.contracts.map(c=>`<tr><td>${c.mat}</td><td class="num">${c.price.toFixed(3)}</td><td class="num">${c.impliedRate.toFixed(3)}</td><td class="num">${c.oi}</td><td>${c.oi>0?'<span class="tag liq">유동</span>':'<span class="tag illiq">마크</span>'}</td></tr>`).join("")+`</tbody>`;
-  }
-  function renderSegTable(){
-    if(!stripInfo||!stripInfo.path){$("#segTable").innerHTML="<tbody><tr><td>산출 시 표시</td></tr></tbody>";return;}
-    let h=`<thead><tr><th>회의</th><th>배정 계약</th><th>누적 인상(회)</th><th>기대 정책금리%</th><th>회의 스텝</th></tr></thead><tbody>`;
-    const p=stripInfo.path;
-    p.forEach((s,i)=>{
-      const stepH=i===0?null:(s.cum-p[i-1].cum);
-      const stepStr=stepH===null?"—":`${stepH>=0?'+':''}${(stepH*25).toFixed(1)}bp`;
-      h+=`<tr><td>${s.label}</td><td class="num">${s.pick||'—'}</td><td class="num">${i===0?'0.00':s.cum.toFixed(2)}</td><td class="num">${s.rate.toFixed(3)}</td><td class="num">${stepStr}</td></tr>`;
+    // per-meeting: nearest liquid contract maturing after, ≥30 fwd days
+    const liq=rows.filter(r=>r.oi>0);
+    let prev=0;const meet=MEET.map(m=>{
+      const md=dstr(m.d);
+      const pick=liq.find(r=>r.mat_end>=md&&r.after>=30)||liq.find(r=>r.mat_end>=md)||liq[liq.length-1];
+      const cum=(pick.fwd-kofr)/0.25, step=(cum-prev)*25, verdict=step>12.5?"up":(step<-12.5?"cut":"hold");
+      prev=cum;
+      return {...m,pick:pick.mat,cum,step,verdict,rate:kofr+cum*0.25};
     });
-    $("#segTable").innerHTML=h+`</tbody>`;
+    return {rows,meet,kofr};
   }
-  function recompute(){
-    const base=parseFloat($("#base").value)||0;$("#baseBadge").textContent=base.toFixed(2)+"%";
-    const steps=meetings.map(stepDist);
-    updateHold();renderBars(steps);renderPath(base);
-    renderMatrix(view==="cond"?conditional(steps):aggregated(steps));
-    $("#viewdesc").textContent=view==="cond"?"회의별 확률을 독립으로 보고 경로 전체를 합성한 누적 분포입니다. 같은 순변화라도 타이밍 불확실성이 분포의 퍼짐으로 나타납니다.":"현재 금리 대비 그 시점까지 반영된 순 인상·인하 횟수입니다. 언제 움직이는지는 무시하고 총량만 봅니다.";
+  function render(){
+    $("#asof").textContent=DATA.asOf;$("#base").textContent=(DATA.baseRate||2.75).toFixed(2)+"%";
+    const {rows,meet}=compute();
     // hero
-    const m0=meetings[0],up=m0.pUp,hold=Math.max(0,1-m0.pUp-m0.pDown),down=m0.pDown;
-    $("#heroDate").textContent=m0.label;
-    $("#heroLine").innerHTML=`인상 <span class="pct">${fmtPct(up)}</span> · 동결 ${fmtPct(hold)}${down>0.005?" · 인하 "+fmtPct(down):""}`;
-    const aggEnd=aggregated(steps).slice(-1)[0];let net=0;for(const k in aggEnd)net+=(+k)*aggEnd[k];
-    $("#heroStats").innerHTML=
-      `<div class="stat"><div class="k">8/27 인상</div><div class="v mono">${fmtPct(up)}</div></div>`+
-      `<div class="stat"><div class="k">연말까지 누적</div><div class="v mono">${net>=0?"+":""}${Math.round(net)}bp <small>≈${(net/25).toFixed(1)}회</small></div></div>`+
-      `<div class="stat"><div class="k">유동 계약</div><div class="v mono">${DATA.contracts.filter(c=>c.oi>0).length}<small>/${DATA.contracts.length}</small></div></div>`;
-    renderSegTable();
+    const m0=meet[0];
+    $("#hd").textContent=m0.l;
+    $("#hl").innerHTML= m0.verdict==="up"?'<em>인상</em> 유력':(m0.verdict==="cut"?'<em>인하</em>':'<em>동결</em> 유력');
+    $("#hc").textContent=`기대 정책금리 ${m0.rate.toFixed(2)}% · 이후 회의는 대체로 동결 반영 (누적 ${m0.cum.toFixed(1)}회)`;
+    // meeting table
+    const pill=v=>v==="up"?'<span class="pill up">인상</span>':v==="cut"?'<span class="pill up">인하</span>':'<span class="pill hold">동결</span>';
+    $("#meet").innerHTML=`<thead><tr><th>회의</th><th>배정 계약</th><th>기대 정책금리</th><th>판정</th></tr></thead><tbody>`+
+      meet.map(m=>`<tr class="mrow"><td><b>${m.l}</b><small>${m.d}</small></td><td class="num mut">${m.pick}</td><td class="num">${m.rate.toFixed(2)}%</td><td>${pill(m.verdict)}</td></tr>`).join("")+`</tbody>`;
+    // raw table (hold baseline)
+    $("#raw").innerHTML=`<thead><tr><th>결제월</th><th>정산가</th><th>내재%</th><th>동결이면%</th><th>OI</th><th>판정</th></tr></thead><tbody>`+
+      rows.map(r=>{const p=r.v==="up"?'<span class="pill up">인상</span>':r.v==="cut"?'<span class="pill up">인하</span>':r.v==="mark"?'<span class="pill mark">마크</span>':'<span class="pill hold">동결</span>';
+        return `<tr style="${r.oi>0?'':'opacity:.5'}"><td>${r.mat}</td><td class="num">${r.price.toFixed(3)}</td><td class="num">${r.impliedRate.toFixed(3)}</td><td class="num mut">${r.holdRate.toFixed(3)}</td><td class="num">${r.oi}</td><td>${p}</td></tr>`;}).join("")+`</tbody>`;
   }
-  function renderBars(steps){
-    $("#bars").innerHTML=meetings.map((m,i)=>{const s=steps[i],up=(s[25]||0)+(s[50]||0),down=(s[-25]||0)+(s[-50]||0),hold=Math.max(0,1-up-down);
-      const seg=(cls,p,t)=>p<=0?"":`<div class="seg ${cls}" style="flex:${p}">${p>=0.12?t+" "+fmtPct(p):""}</div>`;
-      return `<div class="bar-row"><div class="bar-lab">${m.label}<small>${m.date.slice(5)}</small></div><div class="track">${seg("down",down,"인하")}${seg("hold",hold,"동결")}${seg("up",up,"인상")}</div></div>`;}).join("");
-  }
-  function renderMatrix(rows){
-    const keys=new Set();rows.forEach(r=>Object.keys(r).forEach(k=>keys.add(+k)));const ks=[...keys].sort((a,b)=>a-b);
-    const dir=k=>k>0?`<span class="dirchip up">▲${k/25}</span>`:k<0?`<span class="dirchip down">▼${-k/25}</span>`:`<span class="dirchip hold">동결</span>`;
-    let h=`<thead><tr><th style="text-align:left">회의</th>${ks.map(k=>`<th>${dir(k)}<span class="lvl">${targetLabel(k)}%</span></th>`).join("")}</tr></thead><tbody>`;
-    rows.forEach((r,i)=>{h+=`<tr><th>${meetings[i].label}<small>~${meetings[i].date.slice(5)}</small></th>`;
-      ks.forEach(k=>{const p=r[k]||0,on=p>0.5,bg=p>0?`background:color-mix(in srgb,var(--accent) ${Math.round(p*100)}%,var(--surface))`:"";
-        h+=`<td><div class="cell ${on?'on':(p>0?'':'dim')}" style="${bg};padding:9px 4px">${p>0.004?fmtPct(p):"·"}</div></td>`;});h+=`</tr>`;});
-    $("#matrix").innerHTML=h+"</tbody>";
-  }
-  function renderPath(base){
-    const pts=[{x:"현재",r:base}];let run=base;meetings.forEach(m=>{const s=stepDist(m);let e=0;for(const k in s)e+=(+k)*s[k];run+=e/100;pts.push({x:m.label,r:run});});
-    const W=520,H=200,pL=44,pR=52,pT=16,pB=28,rs=pts.map(p=>p.r),lo=Math.min(...rs)-0.12,hi=Math.max(...rs)+0.12;
-    const X=i=>pL+(W-pL-pR)*i/(pts.length-1),Y=r=>pT+(H-pT-pB)*(1-(r-lo)/(hi-lo));
-    let g="";for(let t=0;t<=4;t++){const r=lo+(hi-lo)*t/4,y=Y(r);g+=`<line class="gridline" x1="${pL}" y1="${y.toFixed(1)}" x2="${W-pR}" y2="${y.toFixed(1)}"/><text class="axis" x="${pL-8}" y="${(y+4).toFixed(1)}" text-anchor="end">${r.toFixed(2)}</text>`;}
-    const line=pts.map((p,i)=>`${i?"L":"M"}${X(i).toFixed(1)},${Y(p.r).toFixed(1)}`).join(" ");
-    const dots=pts.map((p,i)=>`<circle class="pathdot" cx="${X(i).toFixed(1)}" cy="${Y(p.r).toFixed(1)}" r="4.5"/><text class="axis" x="${X(i).toFixed(1)}" y="${H-9}" text-anchor="middle">${p.x}</text>`).join("");
-    const labs=pts.map((p,i)=>i===0?"":`<text class="pathlab" x="${X(i).toFixed(1)}" y="${(Y(p.r)-11).toFixed(1)}" text-anchor="middle">${p.r.toFixed(2)}</text>`).join("");
-    $("#pathChart").innerHTML=`<g class="axis">${g}</g><path class="pathline" d="${line}"/>${dots}${labs}`;
-  }
-
-  function applyData(){
-    $("#asofLabel").textContent=DATA.asOf;$("#srcLabel").textContent=DATA.source||"";
-    $("#base").value=DATA.baseRate;$("#kofr").value=DATA.kofr;
-    renderContractInput();renderRawTable();
-  }
-
-  // events
-  $("#base").addEventListener("input",recompute);
-  document.querySelectorAll("[role=tab]").forEach(t=>t.addEventListener("click",()=>{view=t.id==="tab-agg"?"agg":"cond";$("#tab-cond").setAttribute("aria-selected",view==="cond");$("#tab-agg").setAttribute("aria-selected",view==="agg");recompute();}));
-  $("#stripBtn").addEventListener("click",runStrip);
-  $("#incIlliq").addEventListener("change",runStrip);
-  $("#lam").addEventListener("input",e=>{lam=parseFloat(e.target.value);$("#lamv").textContent=lam.toFixed(1);runStrip();});
-  const root=document.documentElement;try{const sv=localStorage.getItem("bokwatch-theme");if(sv)root.setAttribute("data-theme",sv);}catch(e){}
-  $("#themebtn").addEventListener("click",()=>{const cur=root.getAttribute("data-theme"),mq=matchMedia("(prefers-color-scheme:dark)").matches,next=cur?(cur==="dark"?"light":"dark"):(mq?"light":"dark");root.setAttribute("data-theme",next);try{localStorage.setItem("bokwatch-theme",next);}catch(e){}});
-
-  $("#jsdump").textContent=
-"function fwdAvg(c){                       // 실현 과거 차감 → 오늘 이후 만기까지 기대 평균금리\n"+
-"  [w0,w1]=window(c.mat)                    // 백워드 3M 창\n"+
-"  before=Σ realizedRate(d) for d<today    // 6월 2.50 / 7·16 이후 2.75 (확정)\n"+
-"  return (c.impliedRate*days − before) / (오늘~만기 일수)\n"+
-"}\n"+
-"for each 회의 m:\n"+
-"  pick = 그 회의 이후 만기 & 잔존≥30일인 최근접 유동계약\n"+
-"  cum  = (fwdAvg(pick) − 현재금리)/0.25    // 누적 인상횟수 (단조)\n"+
-"  step = cum − 직전회의 cum;  확률 = step/1 을 인접 격자 배분\n"+
-"// 최소자승·정칙화 없음. 계약가 단조 ⇒ 인하 아티팩트 없음.";
-
-  function boot(){applyData();renderMeetings();runStrip();}
-  // bokwatch_data.json 있으면(정적 배포 환경) 자동 사용, 없으면 내장 스냅샷
-  fetch("bokwatch_data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.contracts&&j.contracts.length){DATA=j;}}).catch(()=>{}).finally(boot);
+  // theme
+  const root=document.documentElement;try{const s=localStorage.getItem("bokwatch-theme");if(s)root.setAttribute("data-theme",s);}catch(e){}
+  $("#themebtn").addEventListener("click",()=>{const c=root.getAttribute("data-theme"),mq=matchMedia("(prefers-color-scheme:dark)").matches,n=c?(c==="dark"?"light":"dark"):(mq?"light":"dark");root.setAttribute("data-theme",n);try{localStorage.setItem("bokwatch-theme",n);}catch(e){}});
+  fetch("bokwatch_data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.contracts&&j.contracts.length)DATA=j;}).catch(()=>{}).finally(render);
 })();
 </script>
