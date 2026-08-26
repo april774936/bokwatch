@@ -268,31 +268,40 @@ a{color:var(--accent-strong)}
   function dstr(s){const[y,m,d]=s.split("-").map(Number);return new Date(Date.UTC(y,m-1,d||15));}
   function days(a,b){return Math.round((b-a)/86400000);}
   function overlap(a0,a1,b0,b1){const lo=Math.max(a0,b0),hi=Math.min(a1,b1);return Math.max(0,days(new Date(lo),new Date(hi)));}
-  function matWindow(mat){const e=dstr(mat+"-15");const s=new Date(e);s.setUTCMonth(s.getUTCMonth()-3);return[s,e];}
+  function thirdWed(y,m){let c=0;for(let d=1;d<=28;d++){const dt=new Date(Date.UTC(y,m-1,d));if(dt.getUTCDay()===3){if(++c===3)return dt;}}}
+  function matWindow(mat){const[y,m]=mat.split("-").map(Number);const e=thirdWed(y,m);const s=new Date(e);s.setUTCDate(s.getUTCDate()-90);return[s,e];}
+  // 실현 KOFR 경로: 2026-07-16 인상 전 2.50, 이후 preRate(현재 KOFR). 회의前(오늘 이후 8/27 전 포함) 전부 확정.
+  const HIKE716=Date.UTC(2026,6,16);
+  function realizedRate(tms,preRate){return tms<HIKE716?2.50:preRate;}
   function solveLS(A,b){const n=A[0].length,AtA=Array.from({length:n},()=>Array(n).fill(0)),Atb=Array(n).fill(0);
     for(let i=0;i<A.length;i++)for(let j=0;j<n;j++){Atb[j]+=A[i][j]*b[i];for(let k=0;k<n;k++)AtA[j][k]+=A[i][j]*A[i][k];}
     for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(AtA[r][c])>Math.abs(AtA[p][c]))p=r;[AtA[c],AtA[p]]=[AtA[p],AtA[c]];[Atb[c],Atb[p]]=[Atb[p],Atb[c]];
       const pv=AtA[c][c]||1e-9;for(let r=0;r<n;r++){if(r===c)continue;const f=AtA[r][c]/pv;for(let k=c;k<n;k++)AtA[r][k]-=f*AtA[c][k];Atb[r]-=f*Atb[c];}}
     return Atb.map((v,i)=>v/(AtA[i][i]||1e-9));}
   function runStrip(){
-    const kofr=parseFloat($("#kofr").value)||2.75;
+    const kofr=parseFloat($("#kofr").value)||2.75;          // 회의前(7/16 이후) 확정 금리
     const incIlliq=$("#incIlliq").checked;
     const cs=DATA.contracts.filter(c=>incIlliq||c.oi>0);
-    if(cs.length<3){$("#stripMsg").textContent="유동 계약이 3개 미만 — OI=0 포함을 켜세요.";return;}
-    const wins=cs.map(c=>matWindow(c.mat));
-    const t0=Math.min(...wins.map(w=>+w[0])),t1=Math.max(...wins.map(w=>+w[1]));
-    const cuts=[new Date(t0)];meetings.forEach(m=>{const d=dstr(m.date);if(+d>t0&&+d<t1)cuts.push(d);});cuts.push(new Date(t1));cuts.sort((a,b)=>a-b);
-    const segs=[];for(let i=0;i<cuts.length-1;i++)segs.push([cuts[i],cuts[i+1]]);
-    const S=segs.length,A=[],b=[];
-    cs.forEach((c,ci)=>{const n=days(wins[ci][0],wins[ci][1]);A.push(segs.map(([s0,s1])=>overlap(+wins[ci][0],+wins[ci][1],+s0,+s1)/n));b.push(c.impliedRate);});
-    const W=1000;const anc=Array(S).fill(0);anc[0]=W;A.push(anc);b.push(W*kofr);          // anchor
-    const sl=Math.sqrt(lam);for(let i=0;i<S-1;i++){const r=Array(S).fill(0);r[i]=-sl;r[i+1]=sl;A.push(r);b.push(0);} // smoothness
+    if(cs.length<2){$("#stripMsg").textContent="유동 계약 부족 — OI=0 포함을 켜세요.";return;}
+    const fut=meetings.map(m=>+dstr(m.date)).sort((a,b)=>a-b);   // 미래 회의(미지 세그먼트 경계)
+    const t1=Math.max(...cs.map(c=>+matWindow(c.mat)[1]));
+    const bounds=[...fut,t1];                                     // 각 회의 이후 세그먼트 상한
+    const K=fut.length,A=[],b=[];
+    // 각 계약: 회의前(실현 2.50/2.75) 확정분을 b에서 빼고, 회의後 일수만 미지 세그먼트에 배분
+    cs.forEach(c=>{
+      const[w0,w1]=matWindow(c.mat);const n=days(w0,w1);const row=Array(K).fill(0);let known=0;
+      for(let t=+w0;t<+w1;t+=86400000){
+        if(t<fut[0]) known+=realizedRate(t,kofr);
+        else{for(let i=0;i<K;i++){if(t<bounds[i+1]){row[i]++;break;}}}
+      }
+      A.push(row);b.push(c.impliedRate*n-known);
+    });
+    const sl=Math.sqrt(lam);for(let i=0;i<K-1;i++){const r=Array(K).fill(0);r[i]=-sl;r[i+1]=sl;A.push(r);b.push(0);} // 평활
     const L=solveLS(A,b);
-    const segMeet=segs.map(([s0])=>meetings.find(m=>+dstr(m.date)===+s0));
-    let filled=0;
-    for(let i=0;i<S-1;i++){const m=segMeet[i+1];if(!m)continue;const step=(L[i+1]-L[i])*100;const d=stepToDist(step);m.pUp=(d[25]||0)+(d[50]||0);m.pDown=(d[-25]||0)+(d[-50]||0);filled++;}
-    stripInfo={segs:segs.map((s,i)=>({from:s[0],to:s[1],rate:L[i]})),used:cs.length,filled};
-    $("#stripMsg").textContent=`스트립 완료 · 계약 ${cs.length}개(λ=${lam}), 회의 ${filled}개. 앵커 KOFR ${kofr}%.`;
+    meetings.forEach((m,i)=>{const prev=i===0?kofr:L[i-1];const step=(L[i]-prev)*100;const d=stepToDist(step);m.pUp=Math.min(1,(d[25]||0)+(d[50]||0));m.pDown=Math.min(1,(d[-25]||0)+(d[-50]||0));});
+    const w0min=new Date(Math.min(...cs.map(c=>+matWindow(c.mat)[0])));
+    stripInfo={segs:[{from:w0min,to:new Date(fut[0]),rate:kofr},...fut.map((d,i)=>({from:new Date(d),to:new Date(bounds[i+1]),rate:L[i]}))],used:cs.length,filled:K};
+    $("#stripMsg").textContent=`스트립 완료 · 계약 ${cs.length}개(λ=${lam}). 실현경로(6월 2.50→7/16 인상 2.75) 반영, 회의 ${K}개. 실현 반영 후 λ 민감도 거의 없음.`;
     syncMeetingInputs();recompute();
   }
 
