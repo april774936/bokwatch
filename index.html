@@ -158,7 +158,7 @@ a{color:var(--accent-strong)}
     </div>
     <div class="split" id="heroStats"></div>
   </div>
-  <p class="note" style="margin:0 0 8px">※ KRX KOFR 3개월 선물 정산가에서 <b>산출</b>한 시장 내재 확률이며 예측이 아닙니다. 유동성(OI)이 얕아 개별 회의 분리엔 한계가 있어 평활(정칙화)을 적용합니다. 교육·리서치용, 투자자문 아님.</p>
+  <p class="note" style="margin:0 0 8px">※ KRX KOFR 3개월 선물 정산가에서 <b>산출</b>한 시장 내재 확률이며 예측이 아닙니다. FedWatch 누적(Aggregated) 방식 — 계약 내재금리가 단조↑라 인하 아티팩트가 없습니다. 유동성(OI)이 얇아 개별 회의 타이밍은 저확신. 교육·리서치용, 투자자문 아님.</p>
 
   <div class="rule"></div>
 
@@ -171,8 +171,8 @@ a{color:var(--accent-strong)}
 
       <details class="adv" open>
         <summary>KOFR 선물 정산가 → 자동 산출 (스트리핑)</summary>
-        <div class="lam"><label>평활 λ</label><input type="range" id="lam" min="0" max="4" step="0.5" value="1"><span class="lv mono" id="lamv">1.0</span></div>
-        <div class="note" style="margin-top:0">λ↑ = 회의 사이를 부드럽게(안정), λ=0 = 원시 해(유동성 얕으면 불안정).</div>
+        <div class="lam" style="display:none"><input type="range" id="lam" min="0" max="4" step="0.5" value="1"><span id="lamv"></span></div>
+        <div class="note" style="margin-top:0">방식: 계약 내재금리에서 실현 과거(6월 2.50 / 7·16 이후 2.75)를 뺀 <b>기대 forward 평균</b> → 현재 대비 <b>누적 인상횟수</b>. 계약가가 단조↑라 인하 아티팩트가 원천적으로 없음. 최소자승·정칙화 미사용.</div>
         <div class="tbl-scroll" style="margin-top:12px"><table class="data" id="cInput"></table></div>
         <label class="chkrow"><input type="checkbox" id="incIlliq"> OI=0(호가 마크)까지 포함</label>
         <div style="display:flex;gap:8px"><button class="btn" id="stripBtn" type="button">스트립 실행 → 확률 갱신</button></div>
@@ -202,20 +202,21 @@ a{color:var(--accent-strong)}
     <h2>세부 데이터셋 <span class="hint">— 원자료 · 스트립 중간값 · 방법론</span></h2>
     <h3 style="font-size:14px;margin:4px 0 8px">① KRX KOFR 3개월 선물 (원자료)</h3>
     <div class="tbl-scroll"><table class="data" id="rawTable"></table></div>
-    <h3 style="font-size:14px;margin:20px 0 8px">② 스트립 구간금리 <span style="font-weight:400;color:var(--ink-3);font-size:12px">(회의 사이 기대 정책금리 수준)</span></h3>
+    <h3 style="font-size:14px;margin:20px 0 8px">② 회의별 산출 <span style="font-weight:400;color:var(--ink-3);font-size:12px">(FedWatch 누적방식 · 계약 1개=회의 1개)</span></h3>
     <div class="tbl-scroll"><table class="data" id="segTable"></table></div>
 
     <details class="adv" open style="margin-top:18px">
       <summary>③ 방법론 & 함수 (코드 공개)</summary>
       <div class="method" style="margin-top:12px">
-        <p><b>왜 스트리핑인가.</b> KRX엔 3개월 복리 KOFR 선물만 상장(1개월물 없음). 계약끼리 참조기간이 겹쳐, FedWatch의 "인접 월물 차분" 트릭이 안 통한다. 대신 회의 사이마다 금리가 상수라 두면, 각 선물의 3개월 평균은 그 창에 걸친 구간금리들의 일수가중 평균이다. 겹치는 계약 전부를 <b>연립 최소자승</b>으로 풀어 구간금리를 복원한다.</p>
-        <pre class="code">R_i = Σ_s <b>w(i,s)</b>·L_s        w(i,s) = 구간 s가 창 i에 걸친 일수 / 창 i 총일수
-앵커: 첫 구간 = 현재 KOFR (실현 과거 = 기준금리)
-평활: min ‖A·L − b‖² + <b>λ</b>·Σ (L_{s+1} − L_s)²   ← 유동성 얕을 때 안정화(Tikhonov)
-회의 스텝 = L(회의후) − L(회의전),  확률 = 스텝 / 25bp 를 인접 격자에 배분</pre>
-        <p><b>다회의 투영.</b> Conditional = 회의별 스텝분포를 독립으로 컨볼루션한 누적분포(타이밍 불확실성 포함). Aggregated = 현재 대비 순 인상횟수(타이밍 무관). CME FedWatch Aggregated Enhancement와 동형.</p>
+        <p><b>FedWatch 원칙 2개만 사용.</b> ① 회의 있는 구간은 그 구간을 담는 계약가로 산출. ② EFFR(End)=다음 구간 EFFR(Start) (경로 연속). 최소자승·정칙화는 쓰지 않는다 — 얇은 계약에 억지 적합하면 헛된 인하가 생기기 때문.</p>
+        <pre class="code">1) 내재금리    R = 100 − 정산가
+2) forward평균  fwd = (R·n − Σ실현과거) / 잔존일수     (실현: 6월 2.50 / 7·16 이후 2.75)
+3) 누적 인상   cum = (fwd − 현재금리) / 25bp            ← 계약가 단조↑ ⇒ cum 단조 ⇒ 인하 없음
+4) 회의 스텝   step(회의) = cum(그 회의 이후 최근접 유동계약) − cum(직전 회의)
+5) 확률        step(bp)/25 를 인접 격자에 배분 (FedWatch 정수·소수부)</pre>
+        <p><b>두 뷰.</b> Aggregated = 현재 대비 누적 인상횟수(위 cum). Conditional = 회의별 스텝을 컨볼루션한 누적 결과분포. CME FedWatch Aggregated Enhancement와 동형.</p>
         <pre class="code" id="jsdump"></pre>
-        <p class="note">전체 코드·검증(자기검증 round-trip 포함): <b>bokwatch_strip.py / bokwatch_projection.py</b>. 이 페이지의 계산은 아래 <b>같은 로직의 JS 이식</b>이며 전부 브라우저 로컬 실행.</p>
+        <p class="note">이 페이지의 계산은 위 5줄 그대로의 JS 이식이며 전부 브라우저 로컬 실행. 핵심: 백워드 3M 선물은 창의 대부분이 실현 과거라 <b>실현 정책금리 경로를 반드시 차감</b>해야 하고, 그러면 계약가 단조성이 그대로 살아 인하 아티팩트가 없다.</p>
       </div>
     </details>
 
@@ -224,7 +225,7 @@ a{color:var(--accent-strong)}
   </section>
 
   <footer>
-    <b>데이터</b> · KRX KOFR 3개월 선물 정산가·미결제약정(OI). 유동물(OI&gt;0) 위주로 산출하며 2027물은 호가 마크(OI=0). <b>KOFR-OIS</b> 회의일자 분해가 최정밀이나, 무료 접근 편의상 선물 스트립을 기본으로 함.<br>
+    <b>데이터</b> · KRX KOFR 3개월 선물 정산가·미결제약정(OI). 유동물(OI&gt;0) 위주로 산출하며 2027물은 호가 마크(OI=0). 방식은 FedWatch 누적(실현경로 차감). <b>KOFR-OIS</b> 회의일자 분해가 최정밀이나 무료 접근 편의상 선물을 씀.<br>
     <b>주의</b> · 모든 계산은 브라우저 로컬. 시장가 반영 <b>산출</b>이며 예측·투자자문 아님.
   </footer>
 </div>
@@ -278,30 +279,35 @@ a{color:var(--accent-strong)}
     for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(AtA[r][c])>Math.abs(AtA[p][c]))p=r;[AtA[c],AtA[p]]=[AtA[p],AtA[c]];[Atb[c],Atb[p]]=[Atb[p],Atb[c]];
       const pv=AtA[c][c]||1e-9;for(let r=0;r<n;r++){if(r===c)continue;const f=AtA[r][c]/pv;for(let k=c;k<n;k++)AtA[r][k]-=f*AtA[c][k];Atb[r]-=f*Atb[c];}}
     return Atb.map((v,i)=>v/(AtA[i][i]||1e-9));}
+  // ── FedWatch 누적(Aggregated) 방식: 최소자승·정칙화 없음, 계약 1개=회의 1개 ──
+  // 1) 각 계약 내재금리에서 '실현 과거'(6월 2.50 / 7/16 이후 2.75)를 빼 '오늘 이후 만기까지 기대 평균금리(fwd)' 산출
+  // 2) 누적 인상횟수 = (fwd − 현재)/25bp   (계약가가 단조↑ → 누적도 단조 → 인하 아티팩트 원천봉쇄)
+  // 3) 회의 스텝 = 그 회의 이후 만기하는 '충분히 두꺼운(잔존 forward≥30일)' 최근접 계약의 누적 − 직전 회의 누적
+  function fwdAvg(c,kofr,todayMs){
+    const[w0,w1]=matWindow(c.mat);let before=0,after=0;
+    for(let t=+w0;t<+w1;t+=86400000){ if(t<todayMs) before+=realizedRate(t,kofr); else after++; }
+    return after>0?{fwd:(c.impliedRate*days(w0,w1)-before)/after, after, mat:+w1}:null;
+  }
   function runStrip(){
-    const kofr=parseFloat($("#kofr").value)||2.75;          // 회의前(7/16 이후) 확정 금리
+    const kofr=parseFloat($("#kofr").value)||2.75;
     const incIlliq=$("#incIlliq").checked;
-    const cs=DATA.contracts.filter(c=>incIlliq||c.oi>0);
-    if(cs.length<2){$("#stripMsg").textContent="유동 계약 부족 — OI=0 포함을 켜세요.";return;}
-    const fut=meetings.map(m=>+dstr(m.date)).sort((a,b)=>a-b);   // 미래 회의(미지 세그먼트 경계)
-    const t1=Math.max(...cs.map(c=>+matWindow(c.mat)[1]));
-    const bounds=[...fut,t1];                                     // 각 회의 이후 세그먼트 상한
-    const K=fut.length,A=[],b=[];
-    // 각 계약: 회의前(실현 2.50/2.75) 확정분을 b에서 빼고, 회의後 일수만 미지 세그먼트에 배분
-    cs.forEach(c=>{
-      const[w0,w1]=matWindow(c.mat);const n=days(w0,w1);const row=Array(K).fill(0);let known=0;
-      for(let t=+w0;t<+w1;t+=86400000){
-        if(t<fut[0]) known+=realizedRate(t,kofr);
-        else{for(let i=0;i<K;i++){if(t<bounds[i+1]){row[i]++;break;}}}
-      }
-      A.push(row);b.push(c.impliedRate*n-known);
+    const cs=DATA.contracts.filter(c=>incIlliq||c.oi>0).slice().sort((a,b)=>a.mat<b.mat?-1:1);
+    const [ay,am,ad]=DATA.asOf.split("-").map(Number); const todayMs=Date.UTC(ay,am-1,ad);
+    const fa=cs.map(c=>({c,...(fwdAvg(c,kofr,todayMs)||{})})).filter(x=>x.fwd!=null);
+    if(!fa.length){$("#stripMsg").textContent="계약 없음.";return;}
+    let prevCum=0; const path=[{label:"현재",rate:kofr,cum:0,pick:"—"}];
+    meetings.forEach(m=>{
+      const md=+dstr(m.date);
+      const pick=fa.find(x=>x.mat>=md && x.after>=30) || fa.find(x=>x.mat>=md) || fa[fa.length-1];
+      const cum=(pick.fwd-kofr)/0.25;
+      const step=(cum-prevCum)*25;                 // bp
+      const d=stepToDist(step);
+      m.pUp=Math.min(1,(d[25]||0)+(d[50]||0)); m.pDown=Math.min(1,(d[-25]||0)+(d[-50]||0));
+      path.push({label:m.label,rate:kofr+cum*0.25,cum,pick:pick.c.mat});
+      prevCum=cum;
     });
-    const sl=Math.sqrt(lam);for(let i=0;i<K-1;i++){const r=Array(K).fill(0);r[i]=-sl;r[i+1]=sl;A.push(r);b.push(0);} // 평활
-    const L=solveLS(A,b);
-    meetings.forEach((m,i)=>{const prev=i===0?kofr:L[i-1];const step=(L[i]-prev)*100;const d=stepToDist(step);m.pUp=Math.min(1,(d[25]||0)+(d[50]||0));m.pDown=Math.min(1,(d[-25]||0)+(d[-50]||0));});
-    const w0min=new Date(Math.min(...cs.map(c=>+matWindow(c.mat)[0])));
-    stripInfo={segs:[{from:w0min,to:new Date(fut[0]),rate:kofr},...fut.map((d,i)=>({from:new Date(d),to:new Date(bounds[i+1]),rate:L[i]}))],used:cs.length,filled:K};
-    $("#stripMsg").textContent=`스트립 완료 · 계약 ${cs.length}개(λ=${lam}). 실현경로(6월 2.50→7/16 인상 2.75) 반영, 회의 ${K}개. 실현 반영 후 λ 민감도 거의 없음.`;
+    stripInfo={path,fa:fa.map(x=>({mat:x.c.mat,fwd:x.fwd,cum:(x.fwd-kofr)/0.25,oi:x.c.oi})),used:cs.length};
+    $("#stripMsg").textContent=`산출 완료 · 계약 ${cs.length}개. 실현경로(6월 2.50→7/16 2.75) 차감 후 누적방식. 최소자승·정칙화 없음 → 단조(인하 아티팩트 없음).`;
     syncMeetingInputs();recompute();
   }
 
@@ -328,10 +334,15 @@ a{color:var(--accent-strong)}
       DATA.contracts.map(c=>`<tr><td>${c.mat}</td><td class="num">${c.price.toFixed(3)}</td><td class="num">${c.impliedRate.toFixed(3)}</td><td class="num">${c.oi}</td><td>${c.oi>0?'<span class="tag liq">유동</span>':'<span class="tag illiq">마크</span>'}</td></tr>`).join("")+`</tbody>`;
   }
   function renderSegTable(){
-    if(!stripInfo){$("#segTable").innerHTML="<tbody><tr><td>스트립 실행 시 표시</td></tr></tbody>";return;}
-    const f=d=>`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
-    $("#segTable").innerHTML=`<thead><tr><th>구간(회의 사이)</th><th>기대 정책금리%</th></tr></thead><tbody>`+
-      stripInfo.segs.map(s=>`<tr><td class="num">${f(s.from)} ~ ${f(s.to)}</td><td class="num">${s.rate.toFixed(3)}</td></tr>`).join("")+`</tbody>`;
+    if(!stripInfo||!stripInfo.path){$("#segTable").innerHTML="<tbody><tr><td>산출 시 표시</td></tr></tbody>";return;}
+    let h=`<thead><tr><th>회의</th><th>배정 계약</th><th>누적 인상(회)</th><th>기대 정책금리%</th><th>회의 스텝</th></tr></thead><tbody>`;
+    const p=stripInfo.path;
+    p.forEach((s,i)=>{
+      const stepH=i===0?null:(s.cum-p[i-1].cum);
+      const stepStr=stepH===null?"—":`${stepH>=0?'+':''}${(stepH*25).toFixed(1)}bp`;
+      h+=`<tr><td>${s.label}</td><td class="num">${s.pick||'—'}</td><td class="num">${i===0?'0.00':s.cum.toFixed(2)}</td><td class="num">${s.rate.toFixed(3)}</td><td class="num">${stepStr}</td></tr>`;
+    });
+    $("#segTable").innerHTML=h+`</tbody>`;
   }
   function recompute(){
     const base=parseFloat($("#base").value)||0;$("#baseBadge").textContent=base.toFixed(2)+"%";
@@ -390,7 +401,17 @@ a{color:var(--accent-strong)}
   const root=document.documentElement;try{const sv=localStorage.getItem("bokwatch-theme");if(sv)root.setAttribute("data-theme",sv);}catch(e){}
   $("#themebtn").addEventListener("click",()=>{const cur=root.getAttribute("data-theme"),mq=matchMedia("(prefers-color-scheme:dark)").matches,next=cur?(cur==="dark"?"light":"dark"):(mq?"light":"dark");root.setAttribute("data-theme",next);try{localStorage.setItem("bokwatch-theme",next);}catch(e){}});
 
-  $("#jsdump").textContent="function strip(contracts, meetings, kofr, λ){\n  // 1) 회의일로 구간 분할 → 각 계약 창의 일수가중 계수행렬 A\n  // 2) 앵커(첫 구간=현재 KOFR) + 평활 sqrt(λ)·(L_{s+1}-L_s) 행 추가\n  // 3) 최소자승 solveLS(A,b) → 구간금리 L → 회의 스텝 → 확률\n}\n// 검증: 참 경로 합성 → 스트립 → 정확 복원 (bokwatch_strip.py 자기검증)";
+  $("#jsdump").textContent=
+"function fwdAvg(c){                       // 실현 과거 차감 → 오늘 이후 만기까지 기대 평균금리\n"+
+"  [w0,w1]=window(c.mat)                    // 백워드 3M 창\n"+
+"  before=Σ realizedRate(d) for d<today    // 6월 2.50 / 7·16 이후 2.75 (확정)\n"+
+"  return (c.impliedRate*days − before) / (오늘~만기 일수)\n"+
+"}\n"+
+"for each 회의 m:\n"+
+"  pick = 그 회의 이후 만기 & 잔존≥30일인 최근접 유동계약\n"+
+"  cum  = (fwdAvg(pick) − 현재금리)/0.25    // 누적 인상횟수 (단조)\n"+
+"  step = cum − 직전회의 cum;  확률 = step/1 을 인접 격자 배분\n"+
+"// 최소자승·정칙화 없음. 계약가 단조 ⇒ 인하 아티팩트 없음.";
 
   function boot(){applyData();renderMeetings();runStrip();}
   // bokwatch_data.json 있으면(정적 배포 환경) 자동 사용, 없으면 내장 스냅샷
