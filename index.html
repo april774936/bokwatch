@@ -186,24 +186,30 @@ footer a{color:var(--blue-strong)}
     {mat:"2027-03",price:96.57,impliedRate:3.43,oi:0},{mat:"2027-06",price:96.305,impliedRate:3.695,oi:0}]};
   const MEET=[{l:"8/27",d:"2026-08-27"},{l:"10/22",d:"2026-10-22"},{l:"11/26",d:"2026-11-26"}];
   const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const HIKE716=Date.UTC(2026,6,16),DAY=86400000,$=s=>document.querySelector(s);
+  const DAY=86400000,$=s=>document.querySelector(s);
   const dstr=s=>{const[y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d||15);};
+  // ★ 금통위 기준금리 결정 이력 — 새 결정마다 ["YYYY-MM-DD", 금리] 한 줄 추가하면
+  //   현재금리·다음회의 목록·기대경로가 전부 자동 갱신된다. (이것이 유일한 회의별 수동 업데이트)
+  const RATE_STEPS=[["2026-07-16",2.75],["2026-08-27",3.00]];
+  const BASE0=2.50;                                   // 첫 스텝 이전 기준금리
+  const curRate=RATE_STEPS[RATE_STEPS.length-1][1];   // 현재 기준금리 = 최근 결정
+  const lastDecision=dstr(RATE_STEPS[RATE_STEPS.length-1][0]);
   const fmtD=s=>{const[y,m,d]=s.split("-").map(Number);return d+" "+MON[m-1]+" "+y;};
   function thirdWed(y,m){let c=0;for(let d=1;d<=28;d++){if(new Date(Date.UTC(y,m-1,d)).getUTCDay()===3&&++c===3)return Date.UTC(y,m-1,d);}}
   function win(mat){const[y,m]=mat.split("-").map(Number);const e=thirdWed(y,m);return[e-90*DAY,e];}
-  function realized(t,k){return t<HIKE716?2.50:k;}
+  function realized(t){let r=BASE0;for(const s of RATE_STEPS){if(t>=dstr(s[0]))r=s[1];}return r;}
 
   function compute(){
-    const kofr=DATA.kofr||2.75, today=dstr(DATA.asOf);
+    const today=dstr(DATA.asOf), kofr=curRate;
     const rows=DATA.contracts.map(c=>{
       const[w0,w1]=win(c.mat);let before=0,after=0,hold=0,n=0;
-      for(let t=w0;t<w1;t+=DAY){n++;hold+=(t<today?realized(t,kofr):kofr);if(t<today)before+=realized(t,kofr);else after++;}
+      for(let t=w0;t<w1;t+=DAY){n++;hold+=(t<today?realized(t):kofr);if(t<today)before+=realized(t);else after++;}
       const fwd=after>0?(c.impliedRate*n-before)/after:c.impliedRate, holdRate=hold/n;
       const v=c.oi<=0?"mark":(c.impliedRate>holdRate+0.03?"up":(c.impliedRate<holdRate-0.03?"cut":"hold"));
       return {...c,fwd,holdRate,v,after,mat_end:w1};
     });
     const liq=rows.filter(r=>r.oi>0);let prev=0;
-    const meet=MEET.map(m=>{
+    const meet=MEET.filter(m=>dstr(m.d)>lastDecision).map(m=>{
       const md=dstr(m.d);const pick=liq.find(r=>r.mat_end>=md&&r.after>=30)||liq.find(r=>r.mat_end>=md)||liq[liq.length-1];
       const cum=(pick.fwd-kofr)/0.25, step=(cum-prev)*25;prev=cum;
       let pUp=0,pDown=0;
@@ -231,8 +237,14 @@ footer a{color:var(--blue-strong)}
 
   let ST=null,SEL=0;
   function render(){
-    $("#asof").textContent=DATA.asOf;$("#base").textContent=(DATA.baseRate||2.75).toFixed(2)+"%";
+    $("#asof").textContent=DATA.asOf;$("#base").textContent=curRate.toFixed(2)+"%";
     ST=compute();
+    if(SEL>=ST.meet.length)SEL=0;
+    if(!ST.meet.length){
+      $("#meetsel").innerHTML="";$("#title").textContent="다음 금통위 일정 대기";
+      $("#cap").innerHTML="";$("#capsub").textContent="";$("#chart").innerHTML="";$("#heat").innerHTML="";
+      renderPath();renderRaw();return;
+    }
     // meeting selector
     $("#meetsel").innerHTML=ST.meet.map((m,i)=>{
       const u=m.pUp,dn=m.pDown,h=Math.max(0,1-u-dn);
