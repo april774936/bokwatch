@@ -1,13 +1,13 @@
 {
-  "asOf": "2026-09-28",
+  "asOf": "2026-09-29",
   "baseRate": 2.75,
   "kofr": 2.75,
   "source": "KRX Open API",
   "contracts": [
     {
       "mat": "2026-10",
-      "price": 97.065,
-      "impliedRate": 2.935,
+      "price": 97.035,
+      "impliedRate": 2.965,
       "oi": 30
     },
     {
@@ -24,32 +24,32 @@
     },
     {
       "mat": "2027-01",
-      "price": 96.765,
-      "impliedRate": 3.235,
+      "price": 96.71,
+      "impliedRate": 3.29,
       "oi": 50
     },
     {
       "mat": "2027-02",
-      "price": 96.515,
-      "impliedRate": 3.485,
+      "price": 96.495,
+      "impliedRate": 3.505,
       "oi": 0
     },
     {
       "mat": "2027-03",
-      "price": 96.305,
-      "impliedRate": 3.695,
+      "price": 96.3,
+      "impliedRate": 3.7,
       "oi": 0
     },
     {
       "mat": "2027-06",
-      "price": 96.06,
-      "impliedRate": 3.94,
+      "price": 96.035,
+      "impliedRate": 3.965,
       "oi": 0
     },
     {
       "mat": "2027-09",
-      "price": 96.15,
-      "impliedRate": 3.85,
+      "price": 96.1,
+      "impliedRate": 3.9,
       "oi": 0
     }
   ]
